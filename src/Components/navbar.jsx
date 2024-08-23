@@ -26,7 +26,7 @@ const Navbar = () => {
   return (
     <header
       className={`left-0 poppins-regular  w-full text-white z-50 ease-in-out duration-500 transform ${
-        isScrolled ? 'fixed bg-[#000000CC] text-white shadow-md' : 'text-[#230d0d] absolute translate-y'
+        isScrolled ? 'fixed bg-[#000000CC] text-white shadow-md' : 'text-black absolute translate-y'
       }`}
     >
       <div className="container mx-auto">
@@ -71,10 +71,10 @@ const Navbar = () => {
                 </ul>
               </li>
               <li>
-                <a href="#" className="bg-[#49e4fa] text-white px-4 py-2 hover:bg-[#49e5fa6e] transition duration-300">Signup</a>
+                <a href="signup" className="bg-[#49e4fa] text-white px-4 py-2 hover:bg-[#49e5fa6e] transition duration-300">Signup</a>
               </li>
               <li>
-                <a href="#" className="bg-[#49e4fa] text-white px-4 py-2 mr-3 hover:bg-[#49e5fa6e] transition duration-300">Login</a>
+                <a href="login" className="bg-[#49e4fa] text-white px-4 py-2 mr-3 hover:bg-[#49e5fa6e] transition duration-300">Login</a>
               </li>
             </ul>
           </nav>
@@ -89,7 +89,7 @@ const Navbar = () => {
       </div>
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <nav id="mobile-menu" className="md:hidden bg-white border-t border-gray-200">
+        <nav id="mobile-menu" className="md:hidden bg-inherit border-t border-gray-200">
           <ul className="flex flex-col space-y-2 p-4">
             <li>
               <a href="/" className="hover:text-purple-500">Home</a>
@@ -112,11 +112,11 @@ const Navbar = () => {
             <li>
               <a href="#" className="hover:text-purple-500">Pages</a>
             </li>
-            <li>
-              <a href="#" className="bg-purple-500 text-inherit px-4 py-2 rounded hover:bg-purple-600">Signup</a>
+            <li className='py-5'>
+              <a href="signup" className="bg-[#49e4fa] text-inherit px-4 py-2   hover:bg-[#36a1af]">Signup</a>
             </li>
             <li>
-              <a href="#" className="bg-purple-500 text-inherit px-4 py-2 rounded hover:bg-purple-600">Login</a>
+              <a href="login" className="bg-[#49e4fa] text-inherit px-4 py-2   hover:bg-[#49e4fa]">Login</a>
             </li>
           </ul>
         </nav>

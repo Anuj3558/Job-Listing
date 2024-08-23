@@ -16,7 +16,7 @@ const Hero = () => {
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             <span className="text-[#49e4fa]">1500+</span> Jobs posted last week
           </h1>
-          <form action="search.html" className="w-full max-w-4xl mx-auto mt-8">
+          <form action="search.html" className="md:w-[120vw]  justify-center align-middle p-3 max-w-4xl mx-auto mt-8">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
               <div className="w-full sm:w-2/3 lg:w-1/2 px-2 mb-4">
                 <div className="relative">
@@ -41,7 +41,7 @@ const Hero = () => {
               </div>
               <div className="w-full sm:w-1/3 lg:w-1/4 px-2 mb-4">
                 <select className="form-select w-full py-3 px-4 bg-white text-gray-800 shadow-lg shadow-lg">
-                  <option>All Categories</option>
+                  <option>Categories</option>
                   <option>Medical</option>
                   <option>Technology</option>
                   <option>Government</option>

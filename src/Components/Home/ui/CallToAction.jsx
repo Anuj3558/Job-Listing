@@ -13,12 +13,12 @@ const CallToAction = () => {
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation.
         </p>
-        <a href="#" className="callto-action-button">
+        <button href="#" className="rounded-none">
           I am a Candidate
-        </a>
-        <a href="#" className="callto-action-button">
+        </button>
+        <button href="#" className="rounded-none">
           Request Free Demo
-        </a>
+        </button>
       </div>
     </div>
   );

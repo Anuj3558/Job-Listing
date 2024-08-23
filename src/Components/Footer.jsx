@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-12">
+    <footer className="bg-[#000000CC] text-white py-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap justify-between">
           {/* Top Products */}
@@ -46,7 +46,7 @@ const Footer = () => {
               <div className="w-full lg:w-1/3">
                 <button
                   type="submit"
-                  className="w-[90%] py-3 mx-4 px-5 bg-blue-500 text-white  hover:bg-blue-600 flex items-center justify-center"
+                  className="w-[90%] py-3 mx-4 px-5 bg-[#49e4fa] text-white  hover:bg-[#3db1c1] flex items-center justify-center"
                 >
                   Subscribe
                   <span className="ml-2"><i className="fa fa-arrow-right"></i></span>

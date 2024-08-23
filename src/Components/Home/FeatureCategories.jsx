@@ -13,7 +13,7 @@ const FeatureCategories = () => {
 
   return (
     <section className="feature-cat-area pt-24" id="category">
-      <div className="container mx-auto px-12 mt-[80vh] md:mt-12 ">
+      <div className="container mx-auto px-12  md:mt-12 ">
         <header className="flex justify-center pb-16">
           <div className="text-center">
             <h1 className="mb-4 text-3xl font-bold">Featured Job Categories</h1>

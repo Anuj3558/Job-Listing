@@ -3,24 +3,13 @@ import "../../index.css"
 
 const CallToAction = () => {
   return (
-    <div className="callto-action-container poppins-regular text-[#d17c7c]">
-      <div className="callto-action-content">
-        <h1 className="callto-action-title">
-          Join us today without any hesitation
-        </h1>
-        <p className="callto-action-text">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation.
-        </p>
-        <a href="#" className="callto-action-button">
-          I am a Candidate
-        </a>
-        <a href="#" className="callto-action-button">
-          Request Free Demo
-        </a>
-      </div>
+    <section className="bg-purple-400 py-16 mt-11">
+    <div className="container mx-auto text-center text-white">
+      <h1 className="text-4xl font-bold">Join us today without any hesitation</h1>
+      <p className="mt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <a href="#" className="inline-block bg-white text-purple-400 px-8 py-3 mt-6 400-lg font-bold hover:bg-gray-200">Become a Member</a>
     </div>
+  </section>
   );
 };
 

@@ -13,8 +13,11 @@ import Office from "./office.jpg";
 import JobImg from "./job.jpg";
 import Facebook from "./facebook.png";
 import CodeWave from "./codewave.png";
+import login from "./login.webp"
+import popularJobs from "./job-search.svg"
 export {
     Logo,
+    popularJobs,
     HeroImg,
     CodeWave,
     NoProfile,
@@ -25,6 +28,7 @@ export {
     Spotify,
     HeroImage,
     Google,
+    login,
     Linkedin,
     Youtube,
     Office,

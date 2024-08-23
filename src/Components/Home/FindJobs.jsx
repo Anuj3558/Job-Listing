@@ -59,9 +59,9 @@ const FindJobs = () => {
   };
 
   return (
-    <div className="mx-9 mt-14">
-        <h2 className="align-middle  md:ml-72 poppins-bold md:text-6xl sm:text-5xl  mx-auto">Recent Job Postings</h2>
-      <div className="container mx-auto flex mt-40 gap-6 2xl:gap-10 md:px-5 py-6 md:py-6 ">
+    <div className="mx-9 mt-44">
+        <h2 className="align-middle  md:ml-72 md:mb-24 poppins-bold md:text-6xl text-4xl mb-4 mx-auto">Recent Job Postings</h2>
+      <div className="container mx-auto flex  gap-6 2xl:gap-10 md:px-5  ">
         <div className="hidden md:flex flex-col w-1/6 h-fit bg-white shadow-sm">
           <p className="text-lg font-semibold text-slate-600">Filter Search</p>
 
