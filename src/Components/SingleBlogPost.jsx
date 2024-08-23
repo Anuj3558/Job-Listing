@@ -1,21 +1,12 @@
 import React from 'react';
 import { HeroImg } from '../assets';
 import { FaSearch } from 'react-icons/fa';
+import Banner from './Home/ui/Banner';
 const BlogSingle = () => {
   return (
     <>
       {/* Banner Area */}
-      <section className="relative bg-cover bg-center h-64 flex items-center justify-center" style={{ backgroundImage: `url(${HeroImg})` }}>
-        <div className="absolute inset-0 bg-purple-500 opacity-50"></div>
-        <div className="container mx-auto text-center">
-          <h1 className="text-white text-4xl">Single Blog</h1>
-          <p className="text-white mt-4">
-            <a href="index.html" className="hover:text-orange-500">Home</a>
-            <span className="mx-2 text-orange-500">&gt;</span>
-            <a href="about-us.html" className="hover:text-orange-500">Single blog</a>
-          </p>
-        </div>
-      </section>
+ <Banner page={"Blog Post "} />
 
       {/* Blog Posts Area */}
       <section className="py-16 bg-gray-100 px-14">

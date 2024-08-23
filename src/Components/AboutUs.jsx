@@ -2,21 +2,11 @@ import React from 'react';
 import { HeroImage, HeroImg } from '../assets';
 import { f1, f2, t1, t2, t3, t4 } from '../asset';
 import Testimonials from './Home/testimonial';
+import Banner from './Home/ui/Banner';
 const AboutUs = () => {
   return (
     <div>
-       <section className="relative bg-cover bg-center h-64 flex items-center justify-center" style={{ backgroundImage: `url(${HeroImg})` }}>
-        <div className="absolute inset-0 bg-purple-500 opacity-50"></div>
-        <div className="container mx-auto text-center">
-          <h1 className="text-white text-4xl">About Us</h1>
-          <p className="text-white mt-4">
-            <a href="index.html" className="hover:text-orange-500">Home</a>
-            <span className="mx-2 text-orange-500">&gt;</span>
-            <a href="about-us.html" className="hover:text-orange-500">About Us</a>
-          </p>
-        </div>
-      </section>
-  
+  <Banner page={"About us"} />
       {/* Service Area */}
       <section className="py-[10vh] px-10 ">
         <div className="container  text-center">

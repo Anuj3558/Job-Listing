@@ -10,6 +10,9 @@ import Login from './Components/Login';
 import Signup from './Components/Signup';
 import BlogPosts from './Components/BlogPage';
 import BlogSingle from './Components/SingleBlogPost';
+import Pricing from './Components/Pricing';
+import Category from './Components/Category';
+import ContactPage from './Components/ContactPage';
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
       <Route path='signup' element={<Signup />} />
       <Route path='blog' element={<BlogPosts />} />
       <Route path='blog/:id' element={<BlogSingle />} />
+      <Route path='price' element={<Pricing />} />
+      <Route path="/category" element={<Category />} />
+      <Route path="/contact" element={<ContactPage />} />
     </Routes>
     <Footer />
   </BrowserRouter>
