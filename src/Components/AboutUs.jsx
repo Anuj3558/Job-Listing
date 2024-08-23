@@ -1,9 +1,21 @@
 import React from 'react';
-
+import { HeroImage, HeroImg } from '../assets';
+import { f1, f2, t1, t2, t3, t4 } from '../asset';
+import Testimonials from './Home/testimonial';
 const AboutUs = () => {
   return (
     <div>
-     
+       <section className="relative bg-cover bg-center h-64 flex items-center justify-center" style={{ backgroundImage: `url(${HeroImg})` }}>
+        <div className="absolute inset-0 bg-purple-500 opacity-50"></div>
+        <div className="container mx-auto text-center">
+          <h1 className="text-white text-4xl">About Us</h1>
+          <p className="text-white mt-4">
+            <a href="index.html" className="hover:text-orange-500">Home</a>
+            <span className="mx-2 text-orange-500">&gt;</span>
+            <a href="about-us.html" className="hover:text-orange-500">About Us</a>
+          </p>
+        </div>
+      </section>
   
       {/* Service Area */}
       <section className="py-[10vh] px-10 ">
@@ -34,24 +46,24 @@ const AboutUs = () => {
       </section>
 
       {/* Feature Area */}
-      <section className="bg-gray-100 py-16">
+      <section className="bg-gray-100 ">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <div className="lg:col-span-1">
-              <img src="img/pages/f1.jpg" alt="Feature 1" className="w-full 400-lg" />
+              <img src={f1} alt="Feature 1" className="w-full 400-lg" />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 p-7 text-white bg-[#000000CC]">
               <h6 className="text-purple-400 text-sm font-bold uppercase">Basic & Common Repairs</h6>
               <h1 className="text-3xl font-bold mt-2">Who we are</h1>
-              <p className="mt-4 text-gray-600">Computer users and programmers have become so accustomed to using Windows, even for the changing capabilities and the appearances of the graphical.</p>
+              <p className="mt-4 text-gray-400">Computer users and programmers have become so accustomed to using Windows, even for the changing capabilities and the appearances of the graphical.</p>
             </div>
             <div className="lg:col-span-1">
-              <img src="img/pages/f2.jpg" alt="Feature 2" className="w-full 400-lg" />
+              <img src={f2} alt="Feature 2" className="w-full h-full 400-lg" />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 p-7 text-white bg-[#000000CC]">
               <h6 className="text-purple-400 text-sm font-bold uppercase">Basic & Common Repairs</h6>
               <h1 className="text-3xl font-bold mt-2">What we do</h1>
-              <p className="mt-4 text-gray-600">Computer users and programmers have become so accustomed to using Windows, even for the changing capabilities and the appearances of the graphical.</p>
+              <p className="mt-4 text-gray-400">Computer users and programmers have become so accustomed to using Windows, even for the changing capabilities and the appearances of the graphical.</p>
             </div>
           </div>
         </div>
@@ -64,12 +76,12 @@ const AboutUs = () => {
             <h1 className="text-4xl font-bold">Experienced Mentor Team</h1>
             <p className="mt-4 text-gray-600">Who are in extremely love with eco-friendly systems.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mx-8 ">
             {[
-              { name: 'Ethel Davis', role: 'Managing Director (Sales)', img: 'img/pages/t1.jpg' },
-              { name: 'Rodney Cooper', role: 'Creative Art Director (Project)', img: 'img/pages/t2.jpg' },
-              { name: 'Dora Walker', role: 'Senior Core Developer', img: 'img/pages/t3.jpg' },
-              { name: 'Lena Keller', role: 'Creative Content Developer', img: 'img/pages/t4.jpg' }
+              { name: 'Ethel Davis', role: 'Managing Director (Sales)', img: t1 },
+              { name: 'Rodney Cooper', role: 'Creative Art Director (Project)', img: t2 },
+              { name: 'Dora Walker', role: 'Senior Core Developer', img: t3 },
+              { name: 'Lena Keller', role: 'Creative Content Developer', img: t4 }
             ].map((team, index) => (
               <div key={index} className="single-team">
                 <div className="thumb relative">
@@ -98,6 +110,7 @@ const AboutUs = () => {
           <a href="#" className="inline-block bg-white text-purple-400 px-8 py-3 mt-6 400-lg font-bold hover:bg-gray-200">Become a Member</a>
         </div>
       </section>
+      <Testimonials />
     </div>
   );
 }

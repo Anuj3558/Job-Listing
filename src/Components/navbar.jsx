@@ -51,7 +51,7 @@ const Navbar = () => {
                 <a href="price.html" className="hover:text-purple-500 text-inherit">Price</a>
               </li>
               <li>
-                <a href="blog-home.html" className="hover:text-purple-500 text-inherit">Blog</a>
+                <a href="blog" className="hover:text-purple-500 text-inherit">Blog</a>
               </li>
               <li>
                 <a href="contact.html" className="hover:text-purple-500 text-inherit">Contact</a>
@@ -104,7 +104,7 @@ const Navbar = () => {
               <a href="price.html" className="hover:text-purple-500">Price</a>
             </li>
             <li>
-              <a href="blog-home.html" className="hover:text-purple-500">Blog</a>
+              <a href="blog" className="hover:text-purple-500">Blog</a>
             </li>
             <li>
               <a href="contact.html" className="hover:text-purple-500">Contact</a>

@@ -4,6 +4,7 @@ import FeatureCategories from "./Home/FeatureCategories";
 import FindJobs from "./Home/FindJobs";
 import CallToAction from "./Home/CallToAction";
 import PopularJobCarousel from "./Home/popularJobs";
+import Testimonials from "./Home/testimonial";
 
 const Home =( )=>{
     return(<>
@@ -12,6 +13,7 @@ const Home =( )=>{
       <FeatureCategories />
       <FindJobs />
       <CallToAction />
+      <Testimonials />
       </>
     );
 }
