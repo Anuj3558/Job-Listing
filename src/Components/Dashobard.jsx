@@ -13,13 +13,12 @@ import { useDashboard } from "../context/context.js"; // Import the custom hook
 // Employee components
 import JobPortalProfilePage from "./ProfilePage";
 import Analytics from "./Analytics";
-import RealTimeCodingAndVideo from "./codingEnvironment";
-
 // Company components
 import CompanyProfile from "./CompanyProfile";
 import RecentJobPostings from "./RecentJobPostings";
 import PostJob from "./PostJob";
 import EditJob from "./EditJob.jsx";
+import CodeEditor from "./codingEnv/CodeEditor.jsx";
 
 const Dashboard = ({ userType }) => {
   const { activeSection, setActiveSection } = useDashboard(); // Use the context
@@ -32,7 +31,7 @@ const Dashboard = ({ userType }) => {
         case "MyJobs":
           return <Analytics />;
         case "Applications":
-          return <RealTimeCodingAndVideo />;
+          return <CodeEditor/>;
         case "Notifications":
           return "<Notifications />";
         default:

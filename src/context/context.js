@@ -4,6 +4,7 @@ const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
   const [activeSection, setActiveSection] = useState("Profile"); // Default value
+  
 
   return (
     <DashboardContext.Provider value={{ activeSection, setActiveSection }}>

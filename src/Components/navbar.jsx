@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link, useLocation } from "react-router-dom";
 import { Logo } from "../assets";
+import { useAuth } from "../context/AuthContext"; // Corrected import path
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isLoggedIn, logout } = useAuth(); // Access authentication state
+  const location = useLocation(); // Access current location
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -25,10 +28,15 @@ const Navbar = () => {
     };
   }, []);
 
+  // Determine if the background color should be applied
+  const shouldApplyBackground = ["/signin", "/login", "/dashboard"].includes(
+    location.pathname
+  );
+
   return (
     <header
       className={`left-0 poppins-regular w-full text-white z-50 ease-in-out duration-500 transform ${
-        isScrolled
+        isScrolled || shouldApplyBackground
           ? "fixed bg-[#000000CC] text-white shadow-md"
           : "text-[#230d0d] absolute translate-y"
       }`}
@@ -41,7 +49,7 @@ const Navbar = () => {
             </Link>
           </div>
           <nav id="nav-menu-container" className="hidden md:block">
-            <ul className="flex space-x-6">
+            <ul className="flex space-x-6 items-center">
               <li className="text-inherit font-semibold">
                 <Link to="/">Home</Link>
               </li>
@@ -54,84 +62,83 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/category"
-                  className="hover:text-purple-500 text-inherit"
-                >
+                <Link to="/category" className="hover:text-purple-500">
                   Category
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/price"
-                  className="hover:text-purple-500 text-inherit"
-                >
+                <Link to="/price" className="hover:text-purple-500">
                   Price
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/blog"
-                  className="hover:text-purple-500 text-inherit"
-                >
+                <Link to="/blog-home" className="hover:text-purple-500">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/contact"
-                  className="hover:text-purple-500 text-inherit"
-                >
+                <Link to="/contact" className="hover:text-purple-500">
                   Contact
                 </Link>
               </li>
-              <li className="relative group">
-                <Link to="#" className="hover:text-purple-500 text-inherit">
-                  Pages
-                </Link>
-                <ul className="absolute left-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden group-hover:block">
+              {!isLoggedIn ? (
+                <>
                   <li>
                     <Link
-                      to="/elements"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      to="/signup"
+                      className="bg-[#49e4fa] text-white px-4 py-2 hover:bg-[#49e5fa6e] transition duration-300"
                     >
-                      Elements
+                      Signup
                     </Link>
                   </li>
                   <li>
                     <Link
-                      to="/search"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      to="/login"
+                      className="bg-[#49e4fa] text-white px-4 py-2 mr-3 hover:bg-[#49e5fa6e] transition duration-300"
                     >
-                      Search
+                      Login
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      to="/single"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                </>
+              ) : (
+                <li className="relative group">
+                  <button className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white">
+                    {/* Profile icon */}
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      Single
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <Link
-                  to="/signup"
-                  className="bg-[#49e4fa] text-white px-4 py-2 hover:bg-[#49e5fa6e] transition duration-300"
-                >
-                  Signup
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/login"
-                  className="bg-[#49e4fa] text-white px-4 py-2 mr-3 hover:bg-[#49e5fa6e] transition duration-300"
-                >
-                  Login
-                </Link>
-              </li>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 14c4.418 0 8-3.582 8-8S16.418 0 12 0 4 3.582 4 8s3.582 8 8 8zM12 18c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8z"
+                      ></path>
+                    </svg>
+                  </button>
+                  <ul className="absolute right-0 mt-2 w-48  bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <li>
+                      <Link
+                        to="/dashboard"
+                        className="block px-4 py-2 text-black hover:bg-gray-100 hover:text-purple-500"
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={logout}
+                        className="block px-4 py-2 w-full text-black text-left hover:text-purple-500 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                </li>
+              )}
             </ul>
           </nav>
           <div className="md:hidden">
@@ -160,7 +167,7 @@ const Navbar = () => {
           id="mobile-menu"
           className="md:hidden bg-white border-t border-gray-200"
         >
-          <ul className="flex flex-col space-y-2 p-4">
+          <ul className="flex flex-col space-y-2 p-4 text-purple-500">
             <li>
               <Link to="/" className="hover:text-purple-500">
                 Home
@@ -191,27 +198,42 @@ const Navbar = () => {
                 Contact
               </Link>
             </li>
-            <li>
-              <Link to="#" className="hover:text-purple-500">
-                Pages
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                className="bg-purple-500 text-inherit px-4 py-2 rounded hover:bg-purple-600"
-              >
-                Signup
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                className="bg-purple-500 text-inherit px-4 py-2 rounded hover:bg-purple-600"
-              >
-                Login
-              </Link>
-            </li>
+            {!isLoggedIn ? (
+              <>
+                <li>
+                  <Link
+                    to="/signup"
+                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                  >
+                    Signup
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/login"
+                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                  >
+                    Login
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link to="/profile" className="hover:text-purple-500">
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={logout}
+                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       )}

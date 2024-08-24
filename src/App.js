@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 
 import Navbar from "./Components/navbar";
@@ -19,31 +19,72 @@ import UserDashboard from "./Components/Dashobard";
 import EditJob from "./Components/EditJob";
 import { DashboardProvider } from "./context/context";
 import CandidateList from "./Components/CandidateList";
+// Import the new component
+import { useLocation } from "react-router-dom";
+import ContinueAs from "./Components/Signin/ContinueAs";
+import CitiesPage from "./Components/Signin/CitiesPage";
+import { ProfileProvider } from "./context/ProfileContext";
+import CompanyDetailsForm from "./Components/Signin/CompanyDetailsForm";
+import UploadResume from "./Components/Signin/UploadResume";
+import YourExperiences from "./Components/Signin/YourExperiences";
+import AddSkills from "./Components/Signin/AddSkills";
+import AddExperience from "./Components/Signin/AddExperience";
+
+
 
 function App() {
+
+
+const [currLocation, setCurrLocation] = useState("");
+
+const AppWrapper = () => {
+  const location = useLocation();
+  const curr = location.pathname.slice(1, location.pathname.length);
+  useEffect(() => {
+    setCurrLocation(curr);
+  }, [location]);
+  return null; // This component doesn't render anything itself
+};
+
+
   return (
     <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
-        <Route path="blog" element={<BlogPosts />} />
-        <Route path="blog/:id" element={<BlogSingle />} />
-        <Route path="price" element={<Pricing />} />
-        <Route path="/category" element={<Category />} />
-        <Route path="/jobdetails/:id" element={<JobDetails />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route
-          path="/dashboard"
-          element={<UserDashboard userType="company" />}
-        />
-        <Route path="/editjob/:id" element={<EditJob />} />
-        <Route path="/candidatelist" element={<CandidateList />} />
-      </Routes>
-      <Footer />
+      <ProfileProvider>
+        <DashboardProvider>
+          <AppWrapper /> {/* Add this component to use the useLocation hook */}
+          <Navbar location={currLocation} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/aboutus" element={<AboutUs />} />
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<Signup />} />
+            <Route path="blog" element={<BlogPosts />} />
+            <Route path="blog/:id" element={<BlogSingle />} />
+            <Route path="price" element={<Pricing />} />
+            <Route path="/category" element={<Category />} />
+            <Route path="/jobdetails/:id" element={<JobDetails />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route
+              path="/dashboard"
+              element={<UserDashboard userType="employee" />}
+            />
+            <Route path="/editjob/:id" element={<EditJob />} />
+            <Route path="/candidatelist" element={<CandidateList />} />
+            <Route path="/signup/continueas" element={<ContinueAs />} />
+            <Route path="/signup/cities" element={<CitiesPage />} />
+            <Route
+              path="/signup/company-details"
+              element={<CompanyDetailsForm />}
+            />
+            <Route path="/signup/upload-resume" element={<UploadResume />} />
+            <Route path="/your-experiences" element={<YourExperiences />} />
+            <Route path="/add-skills" element={<AddSkills />} />
+            <Route path="/add-experience" element={<AddExperience />} />
+           
+          </Routes>
+          <Footer />
+        </DashboardProvider>
+      </ProfileProvider>
     </BrowserRouter>
   );
 }
