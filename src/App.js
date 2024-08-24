@@ -13,6 +13,9 @@ import BlogSingle from './Components/SingleBlogPost';
 import Pricing from './Components/Pricing';
 import Category from './Components/Category';
 import ContactPage from './Components/ContactPage';
+import JobDetails from './Components/JobDetails';
+import ProfilePage from './Components/ProfilePage';
+import UserDashboard from './Components/Dashobard';
 
 function App() {
   return (
@@ -27,7 +30,10 @@ function App() {
       <Route path='blog/:id' element={<BlogSingle />} />
       <Route path='price' element={<Pricing />} />
       <Route path="/category" element={<Category />} />
+      <Route path="/jobdetails/:id" element={<JobDetails />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/dashboard" element={<UserDashboard />} />
     </Routes>
     <Footer />
   </BrowserRouter>
