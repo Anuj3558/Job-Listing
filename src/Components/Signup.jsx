@@ -46,6 +46,7 @@ const Signup = () => {
       Cookies.set("_id", uid);
 
       handleSuccess("User Registered Successfully");
+      Navigate("/signup/continueas");
     } catch (error) {
       console.error("Error signing up with email and password:", error.message);
       if (error.response && error.response.status === 500) {
@@ -77,6 +78,7 @@ const Signup = () => {
       Cookies.set("_id", uid);
 
       handleSuccess("User Registered Successfully with Google");
+      Navigate("/signup/continueas");
     } catch (error) {
       console.error("Error signing up with Google:", error.message);
 

@@ -79,6 +79,34 @@ const JobPortalProfilePage = () => {
     }
   };
 
+  const removeExperience = (index) => {
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      experience: prevProfile.experience.filter((_, i) => i !== index),
+    }));
+  };
+
+  const removeEducation = (index) => {
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      education: prevProfile.education.filter((_, i) => i !== index),
+    }));
+  };
+
+  const removeCertification = (index) => {
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      certifications: prevProfile.certifications.filter((_, i) => i !== index),
+    }));
+  };
+
+  const removeSkill = (index) => {
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      skills: prevProfile.skills.filter((_, i) => i !== index),
+    }));
+  };
+
   return (
     <section className="bg-gray-100">
       <div className="container mx-auto">
@@ -176,10 +204,23 @@ const JobPortalProfilePage = () => {
             <div className="card bg-white p-6 shadow-md mb-4 relative">
               <h3 className="font-bold text-gray-700 mb-4">Experience</h3>
               {profile.experience.map((exp, index) => (
-                <div key={index} className="mb-4">
-                  <p className="text-gray-700 font-semibold">{exp.company}</p>
-                  <p className="text-gray-500">{exp.role}</p>
-                  <p className="text-gray-500">{exp.duration}</p>
+                <div
+                  key={index}
+                  className="mb-4 flex justify-between items-center"
+                >
+                  <div>
+                    <p className="text-gray-700 font-semibold">{exp.company}</p>
+                    <p className="text-gray-500">{exp.role}</p>
+                    <p className="text-gray-500">{exp.duration}</p>
+                  </div>
+                  {isEditingExperience && (
+                    <span
+                      onClick={() => removeExperience(index)}
+                      className="text-red-500 cursor-pointer text-lg"
+                    >
+                      &times;
+                    </span>
+                  )}
                 </div>
               ))}
               {isEditingExperience && (
@@ -222,7 +263,7 @@ const JobPortalProfilePage = () => {
                   />
                   <button
                     onClick={addExperience}
-                    className="bg-blue-500 text-white py-1 px-4 rounded"
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
                   >
                     Add Experience
                   </button>
@@ -240,22 +281,33 @@ const JobPortalProfilePage = () => {
             <div className="card bg-white p-6 shadow-md mb-4 relative">
               <h3 className="font-bold text-gray-700 mb-4">Education</h3>
               {profile.education.map((edu, index) => (
-                <p key={index} className="text-gray-500 mb-2">
-                  {edu}
-                </p>
+                <div
+                  key={index}
+                  className="mb-4 flex justify-between items-center"
+                >
+                  <p className="text-gray-700">{edu}</p>
+                  {isEditingEducation && (
+                    <span
+                      onClick={() => removeEducation(index)}
+                      className="text-red-500 cursor-pointer text-lg"
+                    >
+                      &times;
+                    </span>
+                  )}
+                </div>
               ))}
               {isEditingEducation && (
-                <div className="flex">
+                <div className="flex flex-col">
                   <input
                     type="text"
                     value={newEducation}
                     onChange={(e) => setNewEducation(e.target.value)}
                     className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="New Education"
+                    placeholder="Add Education"
                   />
                   <button
                     onClick={addEducation}
-                    className="bg-blue-500 text-white py-1 px-4 rounded"
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
                   >
                     Add Education
                   </button>
@@ -273,22 +325,33 @@ const JobPortalProfilePage = () => {
             <div className="card bg-white p-6 shadow-md mb-4 relative">
               <h3 className="font-bold text-gray-700 mb-4">Certifications</h3>
               {profile.certifications.map((cert, index) => (
-                <p key={index} className="text-gray-500 mb-2">
-                  {cert}
-                </p>
+                <div
+                  key={index}
+                  className="mb-4 flex justify-between items-center"
+                >
+                  <p className="text-gray-700">{cert}</p>
+                  {isEditingCertifications && (
+                    <span
+                      onClick={() => removeCertification(index)}
+                      className="text-red-500 cursor-pointer text-lg"
+                    >
+                      &times;
+                    </span>
+                  )}
+                </div>
               ))}
               {isEditingCertifications && (
-                <div className="flex">
+                <div className="flex flex-col">
                   <input
                     type="text"
                     value={newCertification}
                     onChange={(e) => setNewCertification(e.target.value)}
                     className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="New Certification"
+                    placeholder="Add Certification"
                   />
                   <button
                     onClick={addCertification}
-                    className="bg-blue-500 text-white py-1 px-4 rounded"
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
                   >
                     Add Certification
                   </button>
@@ -307,25 +370,34 @@ const JobPortalProfilePage = () => {
             {/* Skills Section */}
             <div className="card bg-white p-6 shadow-md mb-4 relative">
               <h3 className="font-bold text-gray-700 mb-4">Skills</h3>
-              <ul className="list-disc list-inside mb-4">
-                {profile.skills.map((skill, index) => (
-                  <li key={index} className="text-gray-500 mb-2">
-                    {skill}
-                  </li>
-                ))}
-              </ul>
+              {profile.skills.map((skill, index) => (
+                <div
+                  key={index}
+                  className="mb-4 flex justify-between items-center"
+                >
+                  <p className="text-gray-700">{skill}</p>
+                  {isEditingSkills && (
+                    <span
+                      onClick={() => removeSkill(index)}
+                      className="text-red-500 cursor-pointer text-lg"
+                    >
+                      &times;
+                    </span>
+                  )}
+                </div>
+              ))}
               {isEditingSkills && (
-                <div className="flex">
+                <div className="flex flex-col">
                   <input
                     type="text"
                     value={newSkill}
                     onChange={(e) => setNewSkill(e.target.value)}
                     className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="New Skill"
+                    placeholder="Add Skill"
                   />
                   <button
                     onClick={addSkill}
-                    className="bg-blue-500 text-white py-1 px-4 rounded"
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
                   >
                     Add Skill
                   </button>
@@ -338,8 +410,6 @@ const JobPortalProfilePage = () => {
                 {isEditingSkills ? "Save" : "Edit"}
               </button>
             </div>
-
-            {/* Services Offered Block */}
           </div>
         </div>
       </div>

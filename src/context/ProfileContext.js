@@ -13,6 +13,10 @@ export const ProfileProvider = ({ children }) => {
   const [newCity, setNewCity] = useState("");
   const [userType, setUserType] = useState("");
   const [resume, setResume] = useState(null);
+  const [experiences, setExperiences] = useState([
+  { company: "", role: "", duration: "" }, // Form experience object
+]);
+  const [skills, setSkills] = useState([]);
 
   return (
     <ProfileContext.Provider
@@ -25,6 +29,10 @@ export const ProfileProvider = ({ children }) => {
         setUserType,
         resume,
         setResume,
+        experiences,
+        setExperiences,
+        skills,
+        setSkills,
       }}
     >
       {children}

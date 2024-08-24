@@ -1,35 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Logo } from "../assets";
-import { useAuth } from "../context/AuthContext"; // Corrected import path
+import { login, Logo } from "../assets";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { signOut } from "firebase/auth";
+import { handleError, handleSuccess } from "./Home/utils/utils";
+import { auth } from "../FirebaseAuth/firebaseconfig"; // Assuming you have this configured
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { isLoggedIn, logout } = useAuth(); // Access authentication state
-  const location = useLocation(); // Access current location
+  const { isLoggedIn, logout } = useAuth();
+  const location = useLocation();
+  const [data, setData] = useState(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+  const GetUserData = async () => {
+    const id = Cookies.get("_id");
+    if (id) {
+      try {
+        const response = await axios.post("http://localhost:8080/getdata", {
+          id,
+        });
+        const userData = response?.data;
+        setData(userData[0] || null);
+      } catch (error) {
+        console.error(error);
+        setData(null); // Ensure to handle errors gracefully
       }
+    } else {
+      setData(null);
+    }
+  };
+
+  const HandleLog = async () => {
+    try {
+      await signOut(auth);
+      logout();
+      Cookies.remove("_id");
+      setData(null);
+      handleSuccess("User Logged out successfully");
+    } catch (err) {
+      console.error("Error in logging out:", err);
+      handleError("Error in logging out");
+    }
+  };
+
+  useEffect(() => {
+    GetUserData();
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [Cookies.get("_id")]);
 
-  // Determine if the background color should be applied
-  const shouldApplyBackground = ["/signin", "/login", "/dashboard"].includes(
+  const shouldApplyBackground = ["/signup", "/login", "/dashboard"].includes(
     location.pathname
   );
 
@@ -81,7 +115,7 @@ const Navbar = () => {
                   Contact
                 </Link>
               </li>
-              {!isLoggedIn ? (
+              {!isLoggedIn || !data ? (
                 <>
                   <li>
                     <Link
@@ -102,24 +136,18 @@ const Navbar = () => {
                 </>
               ) : (
                 <li className="relative group">
-                  <button className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white">
-                    {/* Profile icon */}
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 14c4.418 0 8-3.582 8-8S16.418 0 12 0 4 3.582 4 8s3.582 8 8 8zM12 18c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8z"
-                      ></path>
-                    </svg>
+                  <button className="w-10 h-10 mr-6 bg-gray-800 rounded-full flex items-center justify-center text-white">
+                    {data?.photoUrl ? (
+                      <img
+                        src={data.photoUrl}
+                        alt="Profile"
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <p className="text-white">{data?.name?.charAt(0)}</p>
+                    )}
                   </button>
-                  <ul className="absolute right-0 mt-2 w-48  bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <ul className="absolute right-0 mt-2 w-48 bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <li>
                       <Link
                         to="/dashboard"
@@ -130,7 +158,7 @@ const Navbar = () => {
                     </li>
                     <li>
                       <button
-                        onClick={logout}
+                        onClick={HandleLog}
                         className="block px-4 py-2 w-full text-black text-left hover:text-purple-500 hover:bg-gray-100"
                       >
                         Logout
@@ -161,7 +189,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {/* Mobile menu */}
       {isMobileMenuOpen && (
         <nav
           id="mobile-menu"
@@ -198,7 +225,7 @@ const Navbar = () => {
                 Contact
               </Link>
             </li>
-            {!isLoggedIn ? (
+            {!isLoggedIn || !data ? (
               <>
                 <li>
                   <Link
@@ -226,7 +253,7 @@ const Navbar = () => {
                 </li>
                 <li>
                   <button
-                    onClick={logout}
+                    onClick={HandleLog}
                     className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
                   >
                     Logout

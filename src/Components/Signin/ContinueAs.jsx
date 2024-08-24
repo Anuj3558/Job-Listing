@@ -7,13 +7,13 @@ const options = [
   {
     name: "Employee",
     icon: <FaUserAlt size={32} />,
-    link: "/signup/cities",
+    link: "/cities",
     type: "employee",
   },
   {
     name: "Company",
     icon: <FaBuilding size={32} />,
-    link: "/signup/company-details", // Change the link to the company details form
+    link: "/company-details", // Change the link to the company details form
     type: "company",
   },
 ];

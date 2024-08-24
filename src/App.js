@@ -70,13 +70,13 @@ const AppWrapper = () => {
             />
             <Route path="/editjob/:id" element={<EditJob />} />
             <Route path="/candidatelist" element={<CandidateList />} />
-            <Route path="/signup/continueas" element={<ContinueAs />} />
-            <Route path="/signup/cities" element={<CitiesPage />} />
+            <Route path="/continueas" element={<ContinueAs />} />
+            <Route path="/cities" element={<CitiesPage />} />
             <Route
-              path="/signup/company-details"
+              path="/company-details"
               element={<CompanyDetailsForm />}
             />
-            <Route path="/signup/upload-resume" element={<UploadResume />} />
+            <Route path="/upload-resume" element={<UploadResume />} />
             <Route path="/your-experiences" element={<YourExperiences />} />
             <Route path="/add-skills" element={<AddSkills />} />
             <Route path="/add-experience" element={<AddExperience />} />

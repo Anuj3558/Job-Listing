@@ -36,15 +36,15 @@ const CitiesPage = () => {
     const cityToUse = selectedCity || newCity;
     if (cityToUse) {
       console.log(`Selected city: ${cityToUse}`);
-      navigate("/signup/upload-resume"); // Navigate to the UploadResume page
+      navigate("/upload-resume"); // Navigate to the UploadResume page
     } else {
       alert("Please select or enter a city.");
     }
   };
 
   return (
-    <div className="p-4 md:p-6 flex flex-col justify-center items-center w-full min-h-screen bg-gray-100">
-      <div className="flex flex-wrap justify-center w-full max-w-4xl mt-10">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col justify-center items-center w-full min-h-screen bg-gray-100">
+      <div className="flex flex-wrap justify-center w-full max-w-6xl mt-8 md:mt-12">
         {initialCities.map((city, index) => (
           <article
             key={index}
@@ -52,7 +52,7 @@ const CitiesPage = () => {
           >
             <div
               onClick={() => handleCityClick(city.name)}
-              className={`single-fcat text-center bg-white shadow-lg w-full h-48 flex flex-col items-center justify-center cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-100 hover:shadow-xl ${
+              className={`text-center bg-white shadow-lg w-full h-48 flex flex-col items-center justify-center cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-100 hover:shadow-xl ${
                 selectedCity === city.name ? "bg-blue-100" : ""
               }`}
             >
@@ -70,11 +70,11 @@ const CitiesPage = () => {
           value={newCity}
           onChange={handleInputChange}
           placeholder="Enter your city"
-          className="p-2 border border-gray-300 rounded mb-4 w-full sm:w-3/4 md:w-1/2 lg:w-1/3"
+          className="p-2 border border-gray-300 rounded mb-4 w-full "
         />
         <button
           onClick={handleContinue}
-          className="bg-green-500 text-white p-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="bg-green-500 text-white p-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-auto"
         >
           Continue
         </button>
