@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
-
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./Components/navbar";
 import Home from "./Components/home";
 import AboutUs from "./Components/AboutUs";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./Components/Footer";
 import Login from "./Components/Login";
 import Signup from "./Components/Signup";
@@ -17,36 +15,30 @@ import JobDetails from "./Components/JobDetails";
 import ProfilePage from "./Components/ProfilePage";
 import UserDashboard from "./Components/Dashobard";
 import EditJob from "./Components/EditJob";
-import { DashboardProvider } from "./context/context";
 import CandidateList from "./Components/CandidateList";
-// Import the new component
-import { useLocation } from "react-router-dom";
 import ContinueAs from "./Components/Signin/ContinueAs";
 import CitiesPage from "./Components/Signin/CitiesPage";
-import { ProfileProvider } from "./context/ProfileContext";
 import CompanyDetailsForm from "./Components/Signin/CompanyDetailsForm";
 import UploadResume from "./Components/Signin/UploadResume";
 import YourExperiences from "./Components/Signin/YourExperiences";
 import AddSkills from "./Components/Signin/AddSkills";
 import AddExperience from "./Components/Signin/AddExperience";
 import AddEducation from "./Components/Signin/AddEducation";
-
-
+import ProtectedRoute from "./Components/ProtectedRoute";
+import { DashboardProvider } from "./context/context";
+import { ProfileProvider } from "./context/ProfileContext";
 
 function App() {
+  const [currLocation, setCurrLocation] = useState("");
 
-
-const [currLocation, setCurrLocation] = useState("");
-
-const AppWrapper = () => {
-  const location = useLocation();
-  const curr = location.pathname.slice(1, location.pathname.length);
-  useEffect(() => {
-    setCurrLocation(curr);
-  }, [location]);
-  return null; // This component doesn't render anything itself
-};
-
+  const AppWrapper = () => {
+    const location = useLocation();
+    const curr = location.pathname.slice(1, location.pathname.length);
+    useEffect(() => {
+      setCurrLocation(curr);
+    }, [location]);
+    return null; // This component doesn't render anything itself
+  };
 
   return (
     <BrowserRouter>
@@ -65,17 +57,53 @@ const AppWrapper = () => {
             <Route path="/category" element={<Category />} />
             <Route path="/jobdetails/:id" element={<JobDetails />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/dashboard" element={<UserDashboard useType="employee"/>} />
-            <Route path="/editjob/:id" element={<EditJob />} />
-            <Route path="/candidatelist" element={<CandidateList />} />
-            <Route path="/continueas" element={<ContinueAs />} />
-            <Route path="/cities" element={<CitiesPage />} />
-            <Route path="/company-details" element={<CompanyDetailsForm />} />
-            <Route path="/upload-resume" element={<UploadResume />} />
-            <Route path="/your-experiences" element={<YourExperiences />} />
-            <Route path="/add-skills" element={<AddSkills />} />
-            <Route path="/add-experience" element={<AddExperience />} />
-            <Route path="/add-education" element={<AddEducation />} />
+
+            
+            <Route
+              path="/continueas"
+              element={<ProtectedRoute element={<ContinueAs />} />}
+            />
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
+              element={<ProtectedRoute element={<UserDashboard />} />}
+            />
+            <Route
+              path="/editjob/:id"
+              element={<ProtectedRoute element={<EditJob />} />}
+            />
+            <Route
+              path="/candidatelist"
+              element={<ProtectedRoute element={<CandidateList />} />}
+            />
+            <Route
+              path="/cities"
+              element={<ProtectedRoute element={<CitiesPage />} />}
+            />
+            <Route
+              path="/company-details"
+              element={<ProtectedRoute element={<CompanyDetailsForm />} />}
+            />
+            <Route
+              path="/upload-resume"
+              element={<ProtectedRoute element={<UploadResume />} />}
+            />
+            <Route
+              path="/your-experiences"
+              element={<ProtectedRoute element={<YourExperiences />} />}
+            />
+            <Route
+              path="/add-skills"
+              element={<ProtectedRoute element={<AddSkills />} />}
+            />
+            <Route
+              path="/add-experience"
+              element={<ProtectedRoute element={<AddExperience />} />}
+            />
+            <Route
+              path="/add-education"
+              element={<ProtectedRoute element={<AddEducation />} />}
+            />
           </Routes>
           {/* <Footer /> */}
         </DashboardProvider>

@@ -120,4 +120,4 @@ const BlogUpload = () => {
   );
 };
 
-export default BlogUpload;
+export default BlogUpload

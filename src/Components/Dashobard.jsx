@@ -18,6 +18,7 @@ import EditJob from "./EditJob.jsx";
 import CodeEditor from "./codingEnv/CodeEditor.jsx";
 import { useProfile } from "../context/ProfileContext.js";
 import Cookies from "js-cookie";
+import BlogUpload from "./BlogUpload.jsx";
 
 const Dashboard = () => {
   const { activeSection, setActiveSection } = useDashboard(); // Use the context
@@ -41,6 +42,8 @@ const Dashboard = () => {
           return <CodeEditor />;
         case "Notifications":
           return <div>Notifications</div>; // Adjust to a real component or remove
+        case "BlogUpload":
+          return <BlogUpload />;
         default:
           return <JobPortalProfilePage />;
       }
@@ -105,6 +108,15 @@ const Dashboard = () => {
               >
                 <FaBell className="mr-2" />
                 <span>Notifications</span>
+              </li>
+              <li
+                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
+                  activeSection === "BlogUpload" ? "bg-blue-100" : ""
+                }`}
+                onClick={() => setActiveSection("BlogUpload")}
+              >
+                <FaBell className="mr-2" />
+                <span>BlogUpload</span>
               </li>
             </>
           ) : (

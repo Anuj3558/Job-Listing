@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login, Logo } from "../assets";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
@@ -16,13 +16,31 @@ const Navbar = () => {
   const { isLoggedIn, logout } = useAuth();
   const location = useLocation();
 
+  const navigate=useNavigate();
   // Corrected the destructuring to match the context provider
-  const { setName, email, profile, name, setEmail, setProfile } = useProfile();
+  const {
+    setSelectedCity,
+    userType,
+    setUserType,
+    name,
+    setName,
+    email,
+    setEmail,
+    resume,
+    setResume,
+    experiences,
+    setExperiences,
+    setEducation,
+    setProfile,
+    setProfileImg,
+    profileImg
+    
+  } = useProfile();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
+  
   const GetUserData = async () => {
     const uid = Cookies.get("_id");
     if (uid) {
@@ -32,9 +50,17 @@ const Navbar = () => {
         });
         const userData = response?.data;
         console.log(userData);
-        setName(userData?.name);
         setEmail(userData?.email);
-        setProfile(userData?.profileUrl);
+        
+          setName(userData?.name);     
+          setProfileImg(userData?.profileUrl);
+          setUserType(userData?.userType);
+          setSelectedCity(userData?.location);
+          setEducation(userData?.education);
+          setExperiences(userData?.experience);
+        
+        // setResume(userData?.resume);
+
       } catch (error) {
         console.error(error);
         setEmail(null);
@@ -63,6 +89,14 @@ const Navbar = () => {
       handleError("Error in logging out");
     }
   };
+const handleDashboardClick = () => {
+
+  if (userType === "employee" || userType === "company") {
+    navigate("/dashboard");
+  } else {
+    navigate("/continueas");
+  }
+};
 
   useEffect(() => {
     GetUserData();
@@ -160,9 +194,9 @@ const Navbar = () => {
               ) : (
                 <li className="relative group">
                   <button className="w-10 h-10 mr-6 bg-purple-400 rounded-full flex items-center justify-center text-white">
-                    {profile ? (
+                    {profileImg ? (
                       <img
-                        src={profile}
+                        src={profileImg}
                         alt="Profile"
                         className="rounded-full"
                       />
@@ -172,13 +206,14 @@ const Navbar = () => {
                   </button>
                   <ul className="absolute right-0 mt-2 w-48 bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <li>
-                      <Link
-                        to="/dashboard"
-                        className="block px-4 py-2 text-black hover:bg-gray-100 hover:text-purple-500"
+                      <button
+                        onClick={handleDashboardClick}
+                        className="block px-4 py-2 text-black hover:bg-gray-100 hover:text-purple-500 w-full text-left"
                       >
                         Dashboard
-                      </Link>
+                      </button>
                     </li>
+
                     <li>
                       <button
                         onClick={HandleLog}
@@ -270,8 +305,8 @@ const Navbar = () => {
             ) : (
               <li className="relative group">
                 <button className="w-10 h-10 mr-6 bg-purple-400 rounded-full flex items-center justify-center text-white">
-                  {profile ? (
-                    <img src={profile} alt="Profile" className="rounded-full" />
+                  {profileImg ? (
+                    <img src={profileImg} alt="Profile" className="rounded-full" />
                   ) : (
                     <p className="text-white">{name.charAt(0)}</p>
                   )}

@@ -30,13 +30,13 @@ const Login = () => {
         name: displayName,
         email,
         uid,
-        profileImg: photoURL,
+        profile: photoURL,
       });
 
       Cookies.set("_id", uid);
       handleSuccess("User logged in successfully with Google");
 
-      Navigate("/continueas");
+      Navigate("/");
       window.location.reload();
     } catch (error) {
       console.error("Error signing up with Google:", error.message);
@@ -56,7 +56,7 @@ const Login = () => {
       console.log("User signed in with email:", userCredential.user);
       Cookies.set("_id", userCredential?.user?.uid);
       handleSuccess("User logged in successfully with email");
-      Navigate("/continueas");
+      Navigate("/dashboard");
       window.location.reload();
     } catch (error) {
       console.error("Error signing in with email:", error.message);

@@ -37,6 +37,8 @@ const JobPortalProfilePage = () => {
     setSkills,
     education,
     setEducation,
+    profileImg
+    
   } = useProfile();
 
   useEffect(() => {
@@ -60,7 +62,15 @@ const JobPortalProfilePage = () => {
   const [isEditingCertifications, setIsEditingCertifications] = useState(false);
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   const [isEditingResume, setIsEditingResume] = useState(false); // State for editing resume
+  const isEditingAnySection =
+    isEditingProfile ||
+    isEditingExperience ||
+    isEditingEducation ||
+    isEditingCertifications ||
+    isEditingSkills ||
+    isEditingResume;
 
+  
   const [newEducation, setNewEducation] = useState({
     course: "",
     institute: "",
@@ -154,6 +164,19 @@ const JobPortalProfilePage = () => {
     }));
   };
 
+    const saveChanges = () => {
+      // Implement the save logic here
+      console.log("Changes saved:", profile);
+
+      // Reset edit states after saving
+      setIsEditingProfile(false);
+      setIsEditingExperience(false);
+      setIsEditingEducation(false);
+      setIsEditingCertifications(false);
+      setIsEditingSkills(false);
+      setIsEditingResume(false);
+    };
+
   return (
     <section className="bg-gray-100">
       <div className="container mx-auto">
@@ -162,7 +185,7 @@ const JobPortalProfilePage = () => {
           <div className="lg:w-1/3 mb-4">
             <div className="card bg-white p-6 text-center shadow-md mb-4 relative">
               <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                src={`${profileImg}`}
                 alt="avatar"
                 className="rounded-full w-36 h-36 mx-auto"
               />
@@ -519,6 +542,16 @@ const JobPortalProfilePage = () => {
             </div>
           </div>
         </div>
+        {isEditingAnySection && (
+          <div className="fixed bottom-0 left-0 p-4 bg-white shadow-lg">
+            <button
+              onClick={saveChanges}
+              className="bg-green-500 text-white py-2 px-4 rounded"
+            >
+              Save Changes
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -23,6 +23,7 @@ const AddEducation = () => {
     skills,
     education,
     setEducation,
+    userType
   } = useProfile();
 
   const navigate = useNavigate();
@@ -98,7 +99,8 @@ const AddEducation = () => {
       certifications: [""],
       skills: skills,
       resume: resume,
-      status:"Completed"
+      status: "Completed",
+      userType: userType
     };
 
     console.log("Submitting profile data:", profileData);
