@@ -26,7 +26,7 @@ const Login = () => {
       const result = await signInWithPopup(auth, googleProvider);
       console.log("User signed up with Google:", result.user);
       const { displayName, email, uid, photoURL } = result.user;
-      const user = await axios.post("http://localhost:8080/signupwithgoogle", {
+      const user = await axios.post("http://localhost:8080/register/google", {
         name: displayName,
         email,
         uid,
@@ -35,6 +35,7 @@ const Login = () => {
 
       Cookies.set("_id", uid);
       handleSuccess("User logged in successfully with Google");
+
       Navigate("/continueas");
       window.location.reload();
     } catch (error) {
@@ -42,7 +43,7 @@ const Login = () => {
       handleError("Error signing up with Google");
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -51,7 +52,7 @@ const Login = () => {
         email,
         password
       );
-      console.log(userCredential?.user?.uid)
+      console.log(userCredential?.user?.uid);
       console.log("User signed in with email:", userCredential.user);
       Cookies.set("_id", userCredential?.user?.uid);
       handleSuccess("User logged in successfully with email");

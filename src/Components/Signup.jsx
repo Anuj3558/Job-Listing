@@ -37,10 +37,11 @@ const Signup = () => {
       );
       console.log("User signed up:", userCredential.user);
       const uid = userCredential.user.uid;
-      const response = await axios.post(
-        "http://localhost:8080/signupwithemailandpass",
-        { email, uid, name }
-      );
+      const response = await axios.post("http://localhost:8080/register", {
+        email,
+        uid,
+        name,
+      });
 
       // Set cookie with the _id as uid
       Cookies.set("_id", uid);
@@ -67,12 +68,12 @@ const Signup = () => {
       const name = result.user.displayName;
       const email = result.user.email;
       const uid = result.user.uid;
-      const profileImg = result.user.photoURL;
-      const user = await axios.post("http://localhost:8080/signupwithgoogle", {
+      const profile = result.user.photoURL;
+      const user = await axios.post("http://localhost:8080/register/google", {
         name,
         email,
         uid,
-        profileImg,
+        profile,
       });
 
       // Set cookie with the _id as uid
@@ -92,8 +93,8 @@ const Signup = () => {
         handleError("Network Error");
       } else if (error.message === "Firebase: Error (auth/internal-error).") {
         handleError("Firebase Authentication Error");
-      } else {
-        handleError("Error in creating account");
+      } else if ((error.message = " Request failed with status code 400")) {
+        handleError("");
       }
     }
   };

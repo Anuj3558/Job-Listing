@@ -17,9 +17,22 @@ export const ProfileProvider = ({ children }) => {
   ]);
   const [name, setName] = useState(""); // Corrected to setName
   const [email, setEmail] = useState("");
-  const [profile, setProfile] = useState("");
+  // const [profile, setProfile] = useState("");
   const [skills, setSkills] = useState([]);
-  const [status ,setStatus] = useState("");
+  const [status, setStatus] = useState("");
+  const [education, setEducation] = useState([]); // Add state for education
+    const [profile, setProfile] = useState({
+      name: "",
+      title: "",
+      location: "",
+      email: "",
+      phone: "",
+      experience: [{ company: "", role: "", duration: "" }],
+      education: [{ course: "", institute: "", yearOfCompletion: "" }],
+      certifications: [],
+      skills: [],
+      resume: "", // State for resume
+    });
   return (
     <ProfileContext.Provider
       value={{
@@ -31,8 +44,8 @@ export const ProfileProvider = ({ children }) => {
         setNewCity,
         userType,
         setUserType,
-        name,         // Updated to match the setter function
-        setName,      // Updated to match the setter function
+        name, 
+        setName, 
         email,
         setEmail,
         profile,
@@ -43,6 +56,8 @@ export const ProfileProvider = ({ children }) => {
         setExperiences,
         skills,
         setSkills,
+        education,
+        setEducation,
       }}
     >
       {children}

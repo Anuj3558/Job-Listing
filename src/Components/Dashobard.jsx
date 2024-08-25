@@ -9,37 +9,42 @@ import {
   FaPlusCircle,
 } from "react-icons/fa";
 import { useDashboard } from "../context/context.js"; // Import the custom hook
-
-// Employee components
 import JobPortalProfilePage from "./ProfilePage";
 import Analytics from "./Analytics";
-// Company components
 import CompanyProfile from "./CompanyProfile";
 import RecentJobPostings from "./RecentJobPostings";
 import PostJob from "./PostJob";
 import EditJob from "./EditJob.jsx";
 import CodeEditor from "./codingEnv/CodeEditor.jsx";
 import { useProfile } from "../context/ProfileContext.js";
+import Cookies from "js-cookie";
 
 const Dashboard = () => {
   const { activeSection, setActiveSection } = useDashboard(); // Use the context
-  const{userType}=useProfile();
-  
+  const { userType } = useProfile();
+  const userT = userType ; // Ensure userT defaults to "employee"
+
+  useEffect(() => {
+    
+    renderSection();
+    // Any additional logic if required
+  }, [activeSection]); // Ensure useEffect runs when either changes
+
   const renderSection = () => {
-    if (userType === "employee") {
+    if (userT === "employee") {
       switch (activeSection) {
         case "Profile":
           return <JobPortalProfilePage />;
         case "MyJobs":
           return <Analytics />;
         case "Applications":
-          return <CodeEditor/>;
+          return <CodeEditor />;
         case "Notifications":
-          return "<Notifications />";
+          return <div>Notifications</div>; // Adjust to a real component or remove
         default:
           return <JobPortalProfilePage />;
       }
-    } else if (userType === "company") {
+    } else if (userT === "company") {
       switch (activeSection) {
         case "CompanyProfile":
           return <CompanyProfile />;
@@ -54,9 +59,7 @@ const Dashboard = () => {
       }
     }
   };
-  useEffect(() => {
-    renderSection();
-  }, [activeSection]);
+
   return (
     <div className="min-h-screen bg-gray-100 flex pt-16">
       {/* Sidebar */}
@@ -65,7 +68,7 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
         </div>
         <ul>
-          {userType === "employee" ? (
+          {userT === "employee" ? (
             <>
               <li
                 className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${

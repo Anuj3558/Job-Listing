@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserAlt, FaBuilding } from "react-icons/fa"; // Import icons
 import { useProfile } from "../../context/ProfileContext.js"; // Import the ProfileContext
@@ -20,12 +20,14 @@ const options = [
 
 const ContinueAs = () => {
   const navigate = useNavigate();
-  const { setUserType } = useProfile(); // Get the setUserType function from ProfileContext
+  const { userType,setUserType } = useProfile(); // Get the setUserType function from ProfileContext
 
   const handleOptionClick = (link, type) => {
     setUserType(type); // Set the userType based on the option clicked
+    
     navigate(link); // Navigate to the specified link
   };
+  
 
   return (
     <div className="flex flex-col items-center justify-center p-4 md:p-8 lg:p-16 h-screen bg-gray-100">

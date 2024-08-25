@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useProfile } from "../../context/ProfileContext.js"; // Import the useProfile hook
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,6 +21,7 @@ const initialCities = [
 const CitiesPage = () => {
   const { selectedCity, setSelectedCity, newCity, setNewCity } = useProfile(); // Destructure the states and setters
   const navigate = useNavigate();
+
 
   const handleCityClick = (cityName) => {
     setSelectedCity(cityName);

@@ -3,18 +3,19 @@ import { Link, useLocation } from "react-router-dom";
 import { login, Logo } from "../assets";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { signOut } from "firebase/auth";
 import { handleError, handleSuccess } from "./Home/utils/utils";
 import { auth } from "../FirebaseAuth/firebaseconfig";
 import { useProfile } from "../context/ProfileContext";
+import { useDashboard } from "../context/context";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const location = useLocation();
-  
+
   // Corrected the destructuring to match the context provider
   const { setName, email, profile, name, setEmail, setProfile } = useProfile();
 
@@ -23,14 +24,17 @@ const Navbar = () => {
   };
 
   const GetUserData = async () => {
-    const id = Cookies.get("_id");
-    if (id) {
+    const uid = Cookies.get("_id");
+    if (uid) {
       try {
-        const response = await axios.post("http://localhost:8080/getdata", { id });
+        const response = await axios.post("http://localhost:8080/info", {
+          uid,
+        });
         const userData = response?.data;
-        setName(userData[0]?.name);
-        setEmail(userData[0]?.email);
-        setProfile(userData[0]?.photoUrl);
+        console.log(userData);
+        setName(userData?.name);
+        setEmail(userData?.email);
+        setProfile(userData?.profileUrl);
       } catch (error) {
         console.error(error);
         setEmail(null);
@@ -73,9 +77,18 @@ const Navbar = () => {
     };
   }, [Cookies.get("_id")]);
 
-  const shouldApplyBackground = ["/signup", "/login", "/dashboard","/add-experience","/continueas","/add-skills","/your-experiences","/upload-resume","/cities","/company-details"].includes(
-    location.pathname
-  );
+  const shouldApplyBackground = [
+    "/signup",
+    "/login",
+    "/dashboard",
+    "/add-experience",
+    "/continueas",
+    "/add-skills",
+    "/your-experiences",
+    "/upload-resume",
+    "/cities",
+    "/company-details",
+  ].includes(location.pathname);
 
   return (
     <header
@@ -98,7 +111,10 @@ const Navbar = () => {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/aboutus" className="hover:text-purple-500 text-inherit">
+                <Link
+                  to="/aboutus"
+                  className="hover:text-purple-500 text-inherit"
+                >
                   About Us
                 </Link>
               </li>
@@ -145,7 +161,11 @@ const Navbar = () => {
                 <li className="relative group">
                   <button className="w-10 h-10 mr-6 bg-purple-400 rounded-full flex items-center justify-center text-white">
                     {profile ? (
-                      <img src={profile} alt="Profile" className="rounded-full" />
+                      <img
+                        src={profile}
+                        alt="Profile"
+                        className="rounded-full"
+                      />
                     ) : (
                       <p className="text-white">{name.charAt(0)}</p>
                     )}

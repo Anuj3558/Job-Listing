@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 
@@ -41,8 +41,9 @@ const UploadResume = () => {
     }
   };
 
+
   return (
-    <div className="flex flex-col items-center p-4 md:p-6  min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center p-4 md:p-6 md:pt-32  min-h-screen bg-gray-100">
       <h1 className="text-2xl font-bold p-10 text-center mb-8 mt-32">Upload Resume</h1>
       <div
         className={`w-full max-w-md p-6 bg-white rounded-lg shadow-md ${

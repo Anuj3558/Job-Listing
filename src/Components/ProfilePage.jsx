@@ -1,28 +1,71 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { FaTimes } from "react-icons/fa";
+import { useProfile } from "../context/ProfileContext";
 
 const JobPortalProfilePage = () => {
   const [profile, setProfile] = useState({
-    name: "John Smith",
-    title: "Full Stack Developer",
-    location: "Bay Area, San Francisco, CA",
-    email: "example@example.com",
-    phone: "(097) 234-5678",
-    experience: [
-      { company: "XYZ Corp", role: "Frontend Developer", duration: "2 years" },
-      { company: "ABC Inc.", role: "Backend Developer", duration: "3 years" },
-    ],
-    education: ["B.S. in Computer Science"],
-    certifications: ["Certified Full Stack Developer"],
-    skills: ["JavaScript", "React", "Node.js", "Python"],
+    name: "",
+    title: "",
+    location: "",
+    email: "",
+    phone: "",
+    experience: [{ company: "", role: "", duration: "" }],
+    education: [{ course: "", institute: "", yearOfCompletion: "" }],
+    certifications: [],
+    skills: [],
+    resume: "", // State for resume
   });
+
+  const {
+    selectedCity,
+    status,
+    setStatus,
+    setSelectedCity,
+    newCity,
+    setNewCity,
+    userType,
+    setUserType,
+    name,
+    setName,
+    email,
+    setEmail,
+    resume,
+    setResume,
+    experiences,
+    setExperiences,
+    skills,
+    setSkills,
+    education,
+    setEducation,
+  } = useProfile();
+
+  useEffect(() => {
+    setProfile({
+      name: name,
+      title: "",
+      location: selectedCity,
+      email: email,
+      phone: "",
+      experience: experiences,
+      education: education,
+      certifications: [""],
+      skills: skills,
+      resume: resume,
+    });
+  }, []);
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [isEditingEducation, setIsEditingEducation] = useState(false);
   const [isEditingCertifications, setIsEditingCertifications] = useState(false);
   const [isEditingSkills, setIsEditingSkills] = useState(false);
+  const [isEditingResume, setIsEditingResume] = useState(false); // State for editing resume
 
-  const [newEducation, setNewEducation] = useState("");
+  const [newEducation, setNewEducation] = useState({
+    course: "",
+    institute: "",
+    yearOfCompletion: "",
+  });
   const [newCertification, setNewCertification] = useState("");
   const [newExperience, setNewExperience] = useState({
     company: "",
@@ -36,12 +79,16 @@ const JobPortalProfilePage = () => {
   };
 
   const addEducation = () => {
-    if (newEducation.trim()) {
+    if (
+      newEducation.course.trim() &&
+      newEducation.institute.trim() &&
+      newEducation.yearOfCompletion
+    ) {
       setProfile((prevProfile) => ({
         ...prevProfile,
         education: [...prevProfile.education, newEducation],
       }));
-      setNewEducation("");
+      setNewEducation({ course: "", institute: "", yearOfCompletion: "" });
     }
   };
 
@@ -206,27 +253,28 @@ const JobPortalProfilePage = () => {
               {profile.experience.map((exp, index) => (
                 <div
                   key={index}
-                  className="mb-4 flex justify-between items-center"
+                  className="border-b py-2 flex justify-between items-center relative"
                 >
                   <div>
-                    <p className="text-gray-700 font-semibold">{exp.company}</p>
+                    <p className="font-bold">{exp.company}</p>
                     <p className="text-gray-500">{exp.role}</p>
-                    <p className="text-gray-500">{exp.duration}</p>
+                    <p className="text-gray-400">{exp.duration}</p>
                   </div>
                   {isEditingExperience && (
-                    <span
+                    <button
                       onClick={() => removeExperience(index)}
-                      className="text-red-500 cursor-pointer text-lg"
+                      className="absolute top-2 right-2 text-red-500"
                     >
-                      &times;
-                    </span>
+                      <FaTimes />
+                    </button>
                   )}
                 </div>
               ))}
               {isEditingExperience && (
-                <div className="flex flex-col">
+                <div className="mt-4">
                   <input
                     type="text"
+                    placeholder="Company"
                     value={newExperience.company}
                     onChange={(e) =>
                       setNewExperience({
@@ -234,11 +282,11 @@ const JobPortalProfilePage = () => {
                         company: e.target.value,
                       })
                     }
-                    className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="Company"
+                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
                   />
                   <input
                     type="text"
+                    placeholder="Role"
                     value={newExperience.role}
                     onChange={(e) =>
                       setNewExperience({
@@ -246,11 +294,11 @@ const JobPortalProfilePage = () => {
                         role: e.target.value,
                       })
                     }
-                    className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="Role"
+                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
                   />
                   <input
                     type="text"
+                    placeholder="Duration"
                     value={newExperience.duration}
                     onChange={(e) =>
                       setNewExperience({
@@ -258,12 +306,11 @@ const JobPortalProfilePage = () => {
                         duration: e.target.value,
                       })
                     }
-                    className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="Duration"
+                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
                   />
                   <button
                     onClick={addExperience}
-                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    className="bg-blue-500 text-white py-2 px-4 rounded"
                   >
                     Add Experience
                   </button>
@@ -283,31 +330,64 @@ const JobPortalProfilePage = () => {
               {profile.education.map((edu, index) => (
                 <div
                   key={index}
-                  className="mb-4 flex justify-between items-center"
+                  className="border-b py-2 flex justify-between items-center relative"
                 >
-                  <p className="text-gray-700">{edu}</p>
+                  <div>
+                    <p className="font-bold">{edu.course}</p>
+                    <p className="text-gray-500">{edu.institute}</p>
+                    <p className="text-gray-400">{edu.yearOfCompletion}</p>
+                  </div>
                   {isEditingEducation && (
-                    <span
+                    <button
                       onClick={() => removeEducation(index)}
-                      className="text-red-500 cursor-pointer text-lg"
+                      className="absolute top-2 right-2 text-red-500"
                     >
-                      &times;
-                    </span>
+                      <FaTimes />
+                    </button>
                   )}
                 </div>
               ))}
               {isEditingEducation && (
-                <div className="flex flex-col">
+                <div className="mt-4">
                   <input
                     type="text"
-                    value={newEducation}
-                    onChange={(e) => setNewEducation(e.target.value)}
-                    className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="Add Education"
+                    placeholder="Course"
+                    value={newEducation.course}
+                    onChange={(e) =>
+                      setNewEducation({
+                        ...newEducation,
+                        course: e.target.value,
+                      })
+                    }
+                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Institute"
+                    value={newEducation.institute}
+                    onChange={(e) =>
+                      setNewEducation({
+                        ...newEducation,
+                        institute: e.target.value,
+                      })
+                    }
+                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Year of Completion"
+                    value={newEducation.yearOfCompletion}
+                    onChange={(e) =>
+                      setNewEducation({
+                        ...newEducation,
+                        yearOfCompletion: e.target.value,
+                      })
+                    }
+                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
                   />
                   <button
                     onClick={addEducation}
-                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    className="bg-blue-500 text-white py-2 px-4 rounded"
                   >
                     Add Education
                   </button>
@@ -327,31 +407,33 @@ const JobPortalProfilePage = () => {
               {profile.certifications.map((cert, index) => (
                 <div
                   key={index}
-                  className="mb-4 flex justify-between items-center"
+                  className="border-b py-2 flex justify-between items-center relative"
                 >
-                  <p className="text-gray-700">{cert}</p>
+                  <div>
+                    <p className="text-gray-700">{cert}</p>
+                  </div>
                   {isEditingCertifications && (
-                    <span
+                    <button
                       onClick={() => removeCertification(index)}
-                      className="text-red-500 cursor-pointer text-lg"
+                      className="absolute top-2 right-2 text-red-500"
                     >
-                      &times;
-                    </span>
+                      <FaTimes />
+                    </button>
                   )}
                 </div>
               ))}
               {isEditingCertifications && (
-                <div className="flex flex-col">
+                <div className="mt-4">
                   <input
                     type="text"
+                    placeholder="Certification"
                     value={newCertification}
                     onChange={(e) => setNewCertification(e.target.value)}
-                    className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="Add Certification"
+                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
                   />
                   <button
                     onClick={addCertification}
-                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    className="bg-blue-500 text-white py-2 px-4 rounded"
                   >
                     Add Certification
                   </button>
@@ -373,31 +455,31 @@ const JobPortalProfilePage = () => {
               {profile.skills.map((skill, index) => (
                 <div
                   key={index}
-                  className="mb-4 flex justify-between items-center"
+                  className="border-b py-2 flex justify-between items-center relative"
                 >
                   <p className="text-gray-700">{skill}</p>
                   {isEditingSkills && (
-                    <span
+                    <button
                       onClick={() => removeSkill(index)}
-                      className="text-red-500 cursor-pointer text-lg"
+                      className="absolute top-2 right-2 text-red-500"
                     >
-                      &times;
-                    </span>
+                      <FaTimes />
+                    </button>
                   )}
                 </div>
               ))}
               {isEditingSkills && (
-                <div className="flex flex-col">
+                <div className="mt-4">
                   <input
                     type="text"
+                    placeholder="Add a new skill"
                     value={newSkill}
                     onChange={(e) => setNewSkill(e.target.value)}
-                    className="w-full text-gray-500 mb-2 border-b-2 border-gray-300 focus:outline-none"
-                    placeholder="Add Skill"
+                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
                   />
                   <button
                     onClick={addSkill}
-                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    className="bg-blue-500 text-white py-2 px-4 rounded"
                   >
                     Add Skill
                   </button>
@@ -408,6 +490,31 @@ const JobPortalProfilePage = () => {
                 className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
               >
                 {isEditingSkills ? "Save" : "Edit"}
+              </button>
+            </div>
+
+            {/* Resume Section */}
+            <div className="card bg-white p-6 shadow-md mb-4 relative">
+              <h3 className="font-bold text-gray-700 mb-4">Resume</h3>
+              {isEditingResume ? (
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={(e) =>
+                    setProfile({ ...profile, resume: e.target.files[0] })
+                  }
+                  className="w-full mb-4"
+                />
+              ) : (
+                <p className="text-gray-700">
+                  {profile.resume ? profile.resume.name : "No resume uploaded"}
+                </p>
+              )}
+              <button
+                onClick={() => setIsEditingResume(!isEditingResume)}
+                className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
+              >
+                {isEditingResume ? "Save" : "Edit"}
               </button>
             </div>
           </div>

@@ -29,6 +29,7 @@ import UploadResume from "./Components/Signin/UploadResume";
 import YourExperiences from "./Components/Signin/YourExperiences";
 import AddSkills from "./Components/Signin/AddSkills";
 import AddExperience from "./Components/Signin/AddExperience";
+import AddEducation from "./Components/Signin/AddEducation";
 
 
 
@@ -64,25 +65,19 @@ const AppWrapper = () => {
             <Route path="/category" element={<Category />} />
             <Route path="/jobdetails/:id" element={<JobDetails />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route
-              path="/dashboard"
-              element={<UserDashboard  />}
-            />
+            <Route path="/dashboard" element={<UserDashboard useType="employee"/>} />
             <Route path="/editjob/:id" element={<EditJob />} />
             <Route path="/candidatelist" element={<CandidateList />} />
             <Route path="/continueas" element={<ContinueAs />} />
             <Route path="/cities" element={<CitiesPage />} />
-            <Route
-              path="/company-details"
-              element={<CompanyDetailsForm />}
-            />
+            <Route path="/company-details" element={<CompanyDetailsForm />} />
             <Route path="/upload-resume" element={<UploadResume />} />
             <Route path="/your-experiences" element={<YourExperiences />} />
             <Route path="/add-skills" element={<AddSkills />} />
             <Route path="/add-experience" element={<AddExperience />} />
-           
+            <Route path="/add-education" element={<AddEducation />} />
           </Routes>
-          <Footer />
+          {/* <Footer /> */}
         </DashboardProvider>
       </ProfileProvider>
     </BrowserRouter>

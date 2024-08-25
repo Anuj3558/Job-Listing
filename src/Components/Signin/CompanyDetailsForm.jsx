@@ -1,5 +1,5 @@
 // CompanyDetailsForm.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext.js"; // Import the ProfileContext
 
@@ -19,7 +19,9 @@ const CompanyDetailsForm = () => {
 
     // Navigate to the dashboard or another page after submission
     navigate("/dashboard");
+    
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
