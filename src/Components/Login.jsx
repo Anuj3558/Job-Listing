@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import { login } from "../assets";
 import {
@@ -35,13 +35,14 @@ const Login = () => {
 
       Cookies.set("_id", uid);
       handleSuccess("User logged in successfully with Google");
-      Navigate("/signup/continueas");
+      Navigate("/continueas");
+      window.location.reload();
     } catch (error) {
       console.error("Error signing up with Google:", error.message);
       handleError("Error signing up with Google");
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -50,10 +51,12 @@ const Login = () => {
         email,
         password
       );
+      console.log(userCredential?.user?.uid)
       console.log("User signed in with email:", userCredential.user);
-      Cookies.set("_id", userCredential.user.uid);
+      Cookies.set("_id", userCredential?.user?.uid);
       handleSuccess("User logged in successfully with email");
-      Navigate("/signup/continueas");
+      Navigate("/continueas");
+      window.location.reload();
     } catch (error) {
       console.error("Error signing in with email:", error.message);
       handleError("Error signing in with email");

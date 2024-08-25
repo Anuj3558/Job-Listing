@@ -66,7 +66,7 @@ const AppWrapper = () => {
             <Route path="/contact" element={<ContactPage />} />
             <Route
               path="/dashboard"
-              element={<UserDashboard userType="employee" />}
+              element={<UserDashboard  />}
             />
             <Route path="/editjob/:id" element={<EditJob />} />
             <Route path="/candidatelist" element={<CandidateList />} />

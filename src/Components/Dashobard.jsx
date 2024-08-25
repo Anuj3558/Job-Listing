@@ -19,10 +19,12 @@ import RecentJobPostings from "./RecentJobPostings";
 import PostJob from "./PostJob";
 import EditJob from "./EditJob.jsx";
 import CodeEditor from "./codingEnv/CodeEditor.jsx";
+import { useProfile } from "../context/ProfileContext.js";
 
-const Dashboard = ({ userType }) => {
+const Dashboard = () => {
   const { activeSection, setActiveSection } = useDashboard(); // Use the context
-
+  const{userType}=useProfile();
+  
   const renderSection = () => {
     if (userType === "employee") {
       switch (activeSection) {

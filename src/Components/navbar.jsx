@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { login, Logo } from "../assets";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 import { signOut } from "firebase/auth";
 import { handleError, handleSuccess } from "./Home/utils/utils";
-import { auth } from "../FirebaseAuth/firebaseconfig"; // Assuming you have this configured
+import { auth } from "../FirebaseAuth/firebaseconfig";
+import { useProfile } from "../context/ProfileContext";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const location = useLocation();
-  const [data, setData] = useState(null);
+  
+  // Corrected the destructuring to match the context provider
+  const { setName, email, profile, name, setEmail, setProfile } = useProfile();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -23,17 +26,21 @@ const Navbar = () => {
     const id = Cookies.get("_id");
     if (id) {
       try {
-        const response = await axios.post("http://localhost:8080/getdata", {
-          id,
-        });
+        const response = await axios.post("http://localhost:8080/getdata", { id });
         const userData = response?.data;
-        setData(userData[0] || null);
+        setName(userData[0]?.name);
+        setEmail(userData[0]?.email);
+        setProfile(userData[0]?.photoUrl);
       } catch (error) {
         console.error(error);
-        setData(null); // Ensure to handle errors gracefully
+        setEmail(null);
+        setName(null);
+        setProfile(null);
       }
     } else {
-      setData(null);
+      setEmail(null);
+      setName(null);
+      setProfile(null);
     }
   };
 
@@ -42,7 +49,10 @@ const Navbar = () => {
       await signOut(auth);
       logout();
       Cookies.remove("_id");
-      setData(null);
+      setName(null);
+      setEmail(null);
+      setProfile(null);
+
       handleSuccess("User Logged out successfully");
     } catch (err) {
       console.error("Error in logging out:", err);
@@ -63,7 +73,7 @@ const Navbar = () => {
     };
   }, [Cookies.get("_id")]);
 
-  const shouldApplyBackground = ["/signup", "/login", "/dashboard"].includes(
+  const shouldApplyBackground = ["/signup", "/login", "/dashboard","/add-experience","/continueas","/add-skills","/your-experiences","/upload-resume","/cities","/company-details"].includes(
     location.pathname
   );
 
@@ -88,10 +98,7 @@ const Navbar = () => {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link
-                  to="/aboutus"
-                  className="hover:text-purple-500 text-inherit"
-                >
+                <Link to="/aboutus" className="hover:text-purple-500 text-inherit">
                   About Us
                 </Link>
               </li>
@@ -106,7 +113,7 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/blog-home" className="hover:text-purple-500">
+                <Link to="/blog" className="hover:text-purple-500">
                   Blog
                 </Link>
               </li>
@@ -115,7 +122,7 @@ const Navbar = () => {
                   Contact
                 </Link>
               </li>
-              {!isLoggedIn || !data ? (
+              {!isLoggedIn || !email ? (
                 <>
                   <li>
                     <Link
@@ -136,15 +143,11 @@ const Navbar = () => {
                 </>
               ) : (
                 <li className="relative group">
-                  <button className="w-10 h-10 mr-6 bg-gray-800 rounded-full flex items-center justify-center text-white">
-                    {data?.photoUrl ? (
-                      <img
-                        src={data.photoUrl}
-                        alt="Profile"
-                        className="rounded-full"
-                      />
+                  <button className="w-10 h-10 mr-6 bg-purple-400 rounded-full flex items-center justify-center text-white">
+                    {profile ? (
+                      <img src={profile} alt="Profile" className="rounded-full" />
                     ) : (
-                      <p className="text-white">{data?.name?.charAt(0)}</p>
+                      <p className="text-white">{name.charAt(0)}</p>
                     )}
                   </button>
                   <ul className="absolute right-0 mt-2 w-48 bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -216,7 +219,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/blog-home" className="hover:text-purple-500">
+              <Link to="/blog" className="hover:text-purple-500">
                 Blog
               </Link>
             </li>
@@ -225,12 +228,12 @@ const Navbar = () => {
                 Contact
               </Link>
             </li>
-            {!isLoggedIn || !data ? (
+            {!isLoggedIn || !email ? (
               <>
                 <li>
                   <Link
                     to="/signup"
-                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                    className="bg-[#49e4fa] text-white px-4 py-2 hover:bg-[#49e5fa6e] transition duration-300"
                   >
                     Signup
                   </Link>
@@ -238,28 +241,40 @@ const Navbar = () => {
                 <li>
                   <Link
                     to="/login"
-                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                    className="bg-[#49e4fa] text-white px-4 py-2 mr-3 hover:bg-[#49e5fa6e] transition duration-300"
                   >
                     Login
                   </Link>
                 </li>
               </>
             ) : (
-              <>
-                <li>
-                  <Link to="/profile" className="hover:text-purple-500">
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={HandleLog}
-                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
-                  >
-                    Logout
-                  </button>
-                </li>
-              </>
+              <li className="relative group">
+                <button className="w-10 h-10 mr-6 bg-purple-400 rounded-full flex items-center justify-center text-white">
+                  {profile ? (
+                    <img src={profile} alt="Profile" className="rounded-full" />
+                  ) : (
+                    <p className="text-white">{name.charAt(0)}</p>
+                  )}
+                </button>
+                <ul className="absolute right-0 mt-2 w-48 bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <li>
+                    <Link
+                      to="/dashboard"
+                      className="block px-4 py-2 text-black hover:bg-gray-100 hover:text-purple-500"
+                    >
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={HandleLog}
+                      className="block px-4 py-2 w-full text-black text-left hover:text-purple-500 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </li>
             )}
           </ul>
         </nav>
