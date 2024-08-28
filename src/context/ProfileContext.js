@@ -8,6 +8,7 @@ export const useProfile = () => useContext(ProfileContext);
 
 // Create a provider component
 export const ProfileProvider = ({ children }) => {
+  const [ parser,setParser]=useState();
   const [selectedCity, setSelectedCity] = useState("");
   const [newCity, setNewCity] = useState("");
   const [userType, setUserType] = useState("");
@@ -40,6 +41,8 @@ export const ProfileProvider = ({ children }) => {
       value={{
         selectedCity,
         status,
+        parser,
+        setParser,
         setStatus,
         setSelectedCity,
         newCity,

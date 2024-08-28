@@ -29,6 +29,7 @@ const Navbar = () => {
     resume,
     setResume,
     experiences,
+    setStatus,
     setExperiences,
     setEducation,
     setProfile,
@@ -54,11 +55,12 @@ const Navbar = () => {
         
           setName(userData?.name);     
           setProfileImg(userData?.profileUrl);
+          console.log(userData?.userType)
           setUserType(userData?.userType);
           setSelectedCity(userData?.location);
           setEducation(userData?.education);
           setExperiences(userData?.experience);
-        
+          setStatus(userData?.status)
         // setResume(userData?.resume);
 
       } catch (error) {
@@ -79,11 +81,13 @@ const Navbar = () => {
       await signOut(auth);
       logout();
       Cookies.remove("_id");
+
       setName(null);
       setEmail(null);
       setProfile(null);
 
       handleSuccess("User Logged out successfully");
+      window.location.reload();
     } catch (err) {
       console.error("Error in logging out:", err);
       handleError("Error in logging out");
@@ -94,6 +98,7 @@ const handleDashboardClick = () => {
   if (userType === "employee" || userType === "company") {
     navigate("/dashboard");
   } else {
+    //navigate("/dashboard")
     navigate("/continueas");
   }
 };

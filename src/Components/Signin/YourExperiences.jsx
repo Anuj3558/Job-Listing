@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useProfile } from "../../context/ProfileContext";
 
 const YourExperiences = () => {
+  const {setParser}=useProfile();
   const navigate = useNavigate();
 
   const handleFresherClick = () => {
-    navigate("/add-skills");
+    setParser("fresher");
   };
 
   const handleExperiencedClick = () => {
-    navigate("/add-experience");
+    setParser("Experience");
   };
 
   return (

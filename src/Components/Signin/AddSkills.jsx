@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 
 const AddSkills = () => {
-  const { skills, setSkills } = useProfile([]);
+  const { setParser,skills, setSkills } = useProfile([]);
   const [skillInput, setSkillInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSkillIndex, setSelectedSkillIndex] = useState(-1); // To handle keyboard navigation through suggestions
@@ -73,7 +73,7 @@ const AddSkills = () => {
   // Submit the skill list and navigate
   const handleSubmit = () => {
     console.log("Skills:", skills);
-    navigate("/add-education"); // Or wherever you want to navigate
+     setParser("Education"); // Or wherever you want to navigate
   };
   
 

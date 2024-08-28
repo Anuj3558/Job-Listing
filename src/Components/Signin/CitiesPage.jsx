@@ -19,7 +19,7 @@ const initialCities = [
 ];
 
 const CitiesPage = () => {
-  const { selectedCity, setSelectedCity, newCity, setNewCity } = useProfile(); // Destructure the states and setters
+  const { setParser,selectedCity, setSelectedCity, newCity, setNewCity } = useProfile(); // Destructure the states and setters
   const navigate = useNavigate();
 
 
@@ -37,7 +37,7 @@ const CitiesPage = () => {
     const cityToUse = selectedCity || newCity;
     if (cityToUse) {
       console.log(`Selected city: ${cityToUse}`);
-      navigate("/upload-resume"); // Navigate to the UploadResume page
+      setParser("resume"); // Navigate to the UploadResume page
     } else {
       alert("Please select or enter a city.");
     }
@@ -68,6 +68,7 @@ const CitiesPage = () => {
       <div className="mt-6 flex flex-col items-center">
         <input
           type="text"
+          required="reqired"
           value={newCity}
           onChange={handleInputChange}
           placeholder="Enter your city"

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 
 const AddExperience = () => {
-  const { experiences, setExperiences } = useProfile();
+  const { setParser,experiences, setExperiences } = useProfile();
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [duration, setDuration] = useState("");
@@ -55,7 +55,7 @@ const AddExperience = () => {
   const handleAddExperience = () => {
     const finalCompany = company || companySearch;
     const finalRole = role || roleSearch;
-
+    
     if (finalCompany && finalRole && duration) {
       setExperiences((prevExperiences) => [
         { company: finalCompany, role: finalRole, duration },
@@ -75,7 +75,7 @@ const AddExperience = () => {
   // Save and continue to the next page
   const handleSaveAndContinue = () => {
     console.log("Experience:", experiences);
-    navigate("/add-skills"); // Or wherever you want to navigate
+      setParser("fresher"); // Or wherever you want to navigate
   };
 
   return (

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 
 const UploadResume = () => {
-  const { resume, setResume } = useProfile();
+  const {setParser, resume, setResume } = useProfile();
   const navigate = useNavigate();
   const [dragging, setDragging] = useState(false);
 
@@ -35,7 +35,7 @@ const UploadResume = () => {
   const handleSubmit = () => {
     if (resume) {
       console.log("Resume uploaded:", resume.name);
-      navigate("/your-experiences");
+      setParser("expertise");
     } else {
       alert("Please upload a resume.");
     }

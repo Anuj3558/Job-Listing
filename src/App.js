@@ -27,6 +27,8 @@ import AddEducation from "./Components/Signin/AddEducation";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import { DashboardProvider } from "./context/context";
 import { ProfileProvider } from "./context/ProfileContext";
+import ProfileStatus from "./Components/ProfileStatus";
+import ComplteProfile from "./Components/Signin/ContinueAs";
 
 function App() {
   const [currLocation, setCurrLocation] = useState("");
@@ -61,7 +63,8 @@ function App() {
             
             <Route
               path="/continueas"
-              element={<ProtectedRoute element={<ContinueAs />} />}
+              element={<ProfileStatus element={<ComplteProfile />} />}
+            
             />
             {/* Protected routes */}
             <Route
@@ -77,35 +80,14 @@ function App() {
               element={<ProtectedRoute element={<CandidateList />} />}
             />
             <Route
-              path="/cities"
-              element={<ProtectedRoute element={<CitiesPage />} />}
-            />
-            <Route
               path="/company-details"
               element={<ProtectedRoute element={<CompanyDetailsForm />} />}
             />
-            <Route
-              path="/upload-resume"
-              element={<ProtectedRoute element={<UploadResume />} />}
-            />
-            <Route
-              path="/your-experiences"
-              element={<ProtectedRoute element={<YourExperiences />} />}
-            />
-            <Route
-              path="/add-skills"
-              element={<ProtectedRoute element={<AddSkills />} />}
-            />
-            <Route
-              path="/add-experience"
-              element={<ProtectedRoute element={<AddExperience />} />}
-            />
-            <Route
-              path="/add-education"
-              element={<ProtectedRoute element={<AddEducation />} />}
-            />
+        
+          
+            
           </Routes>
-          {/* <Footer /> */}
+          <Footer />
         </DashboardProvider>
       </ProfileProvider>
     </BrowserRouter>

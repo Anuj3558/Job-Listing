@@ -184,11 +184,19 @@ const JobPortalProfilePage = () => {
           {/* Profile Summary Section */}
           <div className="lg:w-1/3 mb-4">
             <div className="card bg-white p-6 text-center shadow-md mb-4 relative">
-              <img
-                src={`${profileImg}`}
-                alt="avatar"
-                className="rounded-full w-36 h-36 mx-auto"
-              />
+            
+              {profileImg ? (
+                <img
+                  src={profileImg}
+                  alt="Profile"
+                  className="rounded-full"
+                />
+              ) : (
+                <button className="w-36  h-36 text-7xl mr-6 bg-purple-400 rounded-full ">
+                <p className="text-white">{name.charAt(0)}</p>
+                </button>
+              )}
+           
               {isEditingProfile ? (
                 <>
                   <input
