@@ -37,7 +37,7 @@ const Signup = () => {
       );
       console.log("User signed up:", userCredential.user);
       const uid = userCredential.user.uid;
-      const response = await axios.post("http://localhost:8080/register", {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, {
         email,
         uid,
         name,
@@ -69,7 +69,7 @@ const Signup = () => {
       const email = result.user.email;
       const uid = result.user.uid;
       const profile = result.user.photoURL;
-      const user = await axios.post("http://localhost:8080/register/google", {
+      const user = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register/google`, {
         name,
         email,
         uid,

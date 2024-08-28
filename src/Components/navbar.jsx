@@ -44,9 +44,10 @@ const Navbar = () => {
   
   const GetUserData = async () => {
     const uid = Cookies.get("_id");
+    console.log("env:"+process.env.REACT_APP_BACKEND_URL)
     if (uid) {
       try {
-        const response = await axios.post("http://localhost:8080/info", {
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/info`, {
           uid,
         });
         const userData = response?.data;

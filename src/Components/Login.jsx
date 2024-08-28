@@ -26,7 +26,7 @@ const Login = () => {
       const result = await signInWithPopup(auth, googleProvider);
       console.log("User signed up with Google:", result.user);
       const { displayName, email, uid, photoURL } = result.user;
-      const user = await axios.post("http://localhost:8080/register/google", {
+      const user = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register/google`, {
         name: displayName,
         email,
         uid,
