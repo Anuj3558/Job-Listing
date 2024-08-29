@@ -29,6 +29,8 @@ import { DashboardProvider } from "./context/context";
 import { ProfileProvider } from "./context/ProfileContext";
 import ProfileStatus from "./Components/ProfileStatus";
 import ComplteProfile from "./Components/Signin/ContinueAs";
+import JobBoard from "./Components/text";
+import CompanyOptions from "./Components/Signin/CompanyOptions";
 
 function App() {
   const [currLocation, setCurrLocation] = useState("");
@@ -59,13 +61,14 @@ function App() {
             <Route path="/category" element={<Category />} />
             <Route path="/jobdetails/:id" element={<JobDetails />} />
             <Route path="/contact" element={<ContactPage />} />
-
+            <Route path="/test" element={<CompanyOptions />} />
             
             <Route
               path="/continueas"
               element={<ProfileStatus element={<ComplteProfile />} />}
             
             />
+
             {/* Protected routes */}
             <Route
               path="/dashboard"

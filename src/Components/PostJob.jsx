@@ -23,33 +23,54 @@ const PostJob = () => {
     educationRequirements: false,
   });
 
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
   const handleChange = (e) => {
     setJobDetails({ ...jobDetails, [e.target.name]: e.target.value });
+    setHasUnsavedChanges(true);
   };
 
   const handleArrayChange = (key, index, value) => {
     const newArray = [...jobDetails[key]];
     newArray[index] = value;
     setJobDetails({ ...jobDetails, [key]: newArray });
+    setHasUnsavedChanges(true);
   };
 
   const handleAddToArray = (key) => {
     setJobDetails({ ...jobDetails, [key]: [...jobDetails[key], ""] });
+    setHasUnsavedChanges(true);
   };
 
   const handleRemoveFromArray = (key, index) => {
     const newArray = jobDetails[key].filter((_, i) => i !== index);
     setJobDetails({ ...jobDetails, [key]: newArray });
+    setHasUnsavedChanges(true);
   };
 
   const handleSave = (section) => {
     // Implement save functionality here (e.g., API call)
     setEditMode({ ...editMode, [section]: false });
+    setHasUnsavedChanges(false);
+  };
+
+  const handleFinalSave = () => {
+    // Implement the final save logic here, such as making an API call to save all changes
+    console.log("Saving all changes...", jobDetails);
+    setHasUnsavedChanges(false);
+    // Reset edit modes
+    setEditMode({
+      general: false,
+      whoWeAreLookingFor: false,
+      experienceRequirements: false,
+      jobFeatures: false,
+      educationRequirements: false,
+    });
   };
 
   return (
     <div className="max-h-[80vh]">
-        <h1 className="poppint poppins-bold text-2xl ">Post a new job</h1>
+      <h1 className="poppint poppins-bold text-2xl">Post a new job</h1>
       <section className="py-12 w-[100%]">
         <div className="container mx-auto flex flex-wrap justify-center">
           <div className="w-full lg:w-2/3">
@@ -258,7 +279,7 @@ const PostJob = () => {
                               index
                             )
                           }
-                          className="bg-red-500 text-white px-2 py-1 mt-1 hover:bg-red-600"
+                          className="text-red-500"
                         >
                           Remove
                         </button>
@@ -267,7 +288,7 @@ const PostJob = () => {
                     <button
                       type="button"
                       onClick={() => handleAddToArray("experienceRequirements")}
-                      className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 mt-2"
+                      className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600"
                     >
                       Add Requirement
                     </button>
@@ -281,22 +302,13 @@ const PostJob = () => {
                   </>
                 ) : (
                   <>
-                    <ul className="space-y-4">
+                    <ul className="list-disc ml-6 text-gray-700">
                       {jobDetails.experienceRequirements.length ? (
                         jobDetails.experienceRequirements.map((item, index) => (
-                          <li key={index} className="flex items-start">
-                            <img
-                              src="img/pages/list.jpg"
-                              alt="List Icon"
-                              className="w-6 h-6 mr-2"
-                            />
-                            <span>{item}</span>
-                          </li>
+                          <li key={index}>{item}</li>
                         ))
                       ) : (
-                        <p className="text-gray-700">
-                          No experience requirements added
-                        </p>
+                        <li>No experience requirements added</li>
                       )}
                     </ul>
                     <button
@@ -327,11 +339,7 @@ const PostJob = () => {
                         <textarea
                           value={item}
                           onChange={(e) =>
-                            handleArrayChange(
-                              "jobFeatures",
-                              index,
-                              e.target.value
-                            )
+                            handleArrayChange("jobFeatures", index, e.target.value)
                           }
                           placeholder={`Feature ${index + 1}`}
                           className="text-gray-700 border p-2 w-full"
@@ -341,7 +349,7 @@ const PostJob = () => {
                           onClick={() =>
                             handleRemoveFromArray("jobFeatures", index)
                           }
-                          className="bg-red-500 text-white px-2 py-1 mt-1 hover:bg-red-600"
+                          className="text-red-500"
                         >
                           Remove
                         </button>
@@ -350,7 +358,7 @@ const PostJob = () => {
                     <button
                       type="button"
                       onClick={() => handleAddToArray("jobFeatures")}
-                      className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 mt-2"
+                      className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600"
                     >
                       Add Feature
                     </button>
@@ -364,26 +372,22 @@ const PostJob = () => {
                   </>
                 ) : (
                   <>
-                    <ul className="space-y-4">
+                    <ul className="list-disc ml-6 text-gray-700">
                       {jobDetails.jobFeatures.length ? (
                         jobDetails.jobFeatures.map((item, index) => (
-                          <li key={index} className="flex items-start">
-                            <img
-                              src="img/pages/list.jpg"
-                              alt="List Icon"
-                              className="w-6 h-6 mr-2"
-                            />
-                            <span>{item}</span>
-                          </li>
+                          <li key={index}>{item}</li>
                         ))
                       ) : (
-                        <p className="text-gray-700">No job features added</p>
+                        <li>No job features added</li>
                       )}
                     </ul>
                     <button
                       type="button"
                       onClick={() =>
-                        setEditMode({ ...editMode, jobFeatures: true })
+                        setEditMode({
+                          ...editMode,
+                          jobFeatures: true,
+                        })
                       }
                       className="bg-purple-500 text-white px-4 py-2 hover:bg-purple-600 mt-2"
                     >
@@ -396,9 +400,7 @@ const PostJob = () => {
 
             {/* Education Requirements */}
             <div className="bg-white p-6 shadow-md mb-6">
-              <h4 className="text-2xl font-bold mb-4">
-                Education Requirements
-              </h4>
+              <h4 className="text-2xl font-bold mb-4">Education Requirements</h4>
               <form>
                 {editMode.educationRequirements ? (
                   <>
@@ -407,11 +409,7 @@ const PostJob = () => {
                         <textarea
                           value={item}
                           onChange={(e) =>
-                            handleArrayChange(
-                              "educationRequirements",
-                              index,
-                              e.target.value
-                            )
+                            handleArrayChange("educationRequirements", index, e.target.value)
                           }
                           placeholder={`Requirement ${index + 1}`}
                           className="text-gray-700 border p-2 w-full"
@@ -419,12 +417,9 @@ const PostJob = () => {
                         <button
                           type="button"
                           onClick={() =>
-                            handleRemoveFromArray(
-                              "educationRequirements",
-                              index
-                            )
+                            handleRemoveFromArray("educationRequirements", index)
                           }
-                          className="bg-red-500 text-white px-2 py-1 mt-1 hover:bg-red-600"
+                          className="text-red-500"
                         >
                           Remove
                         </button>
@@ -433,7 +428,7 @@ const PostJob = () => {
                     <button
                       type="button"
                       onClick={() => handleAddToArray("educationRequirements")}
-                      className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 mt-2"
+                      className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600"
                     >
                       Add Requirement
                     </button>
@@ -447,22 +442,13 @@ const PostJob = () => {
                   </>
                 ) : (
                   <>
-                    <ul className="space-y-4">
+                    <ul className="list-disc ml-6 text-gray-700">
                       {jobDetails.educationRequirements.length ? (
                         jobDetails.educationRequirements.map((item, index) => (
-                          <li key={index} className="flex items-start">
-                            <img
-                              src="img/pages/list.jpg"
-                              alt="List Icon"
-                              className="w-6 h-6 mr-2"
-                            />
-                            <span>{item}</span>
-                          </li>
+                          <li key={index}>{item}</li>
                         ))
                       ) : (
-                        <p className="text-gray-700">
-                          No education requirements added
-                        </p>
+                        <li>No education requirements added</li>
                       )}
                     </ul>
                     <button
@@ -481,6 +467,19 @@ const PostJob = () => {
                 )}
               </form>
             </div>
+
+            {/* Final Save Button */}
+            {hasUnsavedChanges && (
+              <div className="text-center mt-6">
+                <button
+                  type="button"
+                  onClick={handleFinalSave}
+                  className="bg-blue-500 text-white px-6 py-3 hover:bg-blue-600"
+                >
+                  Save All Changes
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>

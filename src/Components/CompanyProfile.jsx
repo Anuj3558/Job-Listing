@@ -1,6 +1,8 @@
 import React from "react";
+import { useCompany } from "../context/companyContext";
 
 const CompanyProfile = () => {
+  const { Companyname, address, Companyemail, logoUrl, admins, owner, setCompanyName,setLogoUrl,setCompnayEmail,setAdmins,setOwner,setAddress } = useCompany();
   return (
     <section className="bg-gray-100">
       <div className="container mx-auto">
@@ -9,15 +11,15 @@ const CompanyProfile = () => {
           <div className="lg:w-1/3 mb-4">
             <div className="card bg-white p-6 text-center shadow-md mb-4">
               <img
-                src="https://via.placeholder.com/150"
+                src={logoUrl}
                 alt="company-logo"
                 className="rounded-full w-36 h-36 mx-auto"
               />
-              <h5 className="my-3 text-lg font-medium">Tech Solutions Inc.</h5>
+              <h5 className="my-3 text-lg font-medium">{Companyname}</h5>
               <p className="text-gray-500 mb-1">
-                Technology Solutions Provider
+                {address}
               </p>
-              <p className="text-gray-500 mb-4">San Francisco, CA</p>
+              <p className="text-gray-500 mb-4"></p>
               <div className="flex justify-center mb-2">
                 
               </div>
@@ -48,11 +50,10 @@ const CompanyProfile = () => {
           <div className="lg:w-2/3 ml-6">
             <div className="card bg-white p-6 shadow-md mb-4">
               {[
-                { label: "Company Name", value: "Tech Solutions Inc." },
+                { label: "Company Name", value: Companyname },
                 { label: "Industry", value: "Technology" },
-                { label: "Location", value: "San Francisco, CA" },
-                { label: "Founded", value: "2010" },
-                { label: "Employees", value: "200-500" },
+                { label: "Location", value: address },
+               
               ].map((item, index) => (
                 <React.Fragment key={index}>
                   <div className="flex justify-between py-2">

@@ -11,6 +11,7 @@ export const ProfileProvider = ({ children }) => {
   const [ parser,setParser]=useState();
   const [selectedCity, setSelectedCity] = useState("");
   const [newCity, setNewCity] = useState("");
+  const [phoneNo,setphone]=useState();
   const [userType, setUserType] = useState("");
   const [resume, setResume] = useState(null);
   const [experiences, setExperiences] = useState([
@@ -34,6 +35,8 @@ export const ProfileProvider = ({ children }) => {
     certifications: [""],
     skills: [],
     resume: "",
+    phoneNo,
+    setphone
   });
 
   return (

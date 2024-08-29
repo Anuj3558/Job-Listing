@@ -1,92 +1,123 @@
-// CompanyDetailsForm.js
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useProfile } from "../../context/ProfileContext.js"; // Import the ProfileContext
+import axios from 'axios';
+import React, { useState } from 'react';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const CompanyDetailsForm = () => {
-  const [companyName, setCompanyName] = useState("");
-  const [location, setLocation] = useState("");
-  const [industry, setIndustry] = useState("");
+  const [formValues, setFormValues] = useState({
+    name: '',
+    address: '',
+    email: '',
+    logoUrl: null,
+    companyCode: '',  // Added companyCode field
+  });
+  
   const navigate = useNavigate();
-  const { setUserType } = useProfile(); // You can use other context states if needed
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // You can add your form submission logic here
-    console.log("Company Name:", companyName);
-    console.log("Location:", location);
-    console.log("Industry:", industry);
-
-    // Navigate to the dashboard or another page after submission
-    navigate("/dashboard");
-    
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: type === 'file' ? files[0] : value,
+    });
   };
 
+  const uid = Cookies.get('_id');
+  console.log(uid);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('uid', uid); // Append the uid to formData
+
+    Object.keys(formValues).forEach((key) => {
+      formData.append(key, formValues[key]);
+    });
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register-company`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Response:', response.data);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg"
-      >
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          Company Details
-        </h2>
+    <div className="companyform min-h-[100vh]">
+      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-4 bg-white">
+        <h3 className="text-lg font-semibold mb-4 text-2xl mt-32">Company Details</h3>
 
         <div className="mb-4">
-          <label
-            htmlFor="companyName"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Company Name
-          </label>
+          <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700">Company Logo</label>
+          <input
+            type="file"
+            id="logoUrl"
+            name="logoUrl"
+            accept="image/*"
+            onChange={handleChange}
+            className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 -md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Company Name</label>
           <input
             type="text"
-            id="companyName"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            id="name"
+            name="name"
+            value={formValues.name}
+            onChange={handleChange}
             required
+            className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 -md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
 
         <div className="mb-4">
-          <label
-            htmlFor="location"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Location
-          </label>
+          <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
           <input
             type="text"
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            id="address"
+            name="address"
+            value={formValues.address}
+            onChange={handleChange}
             required
+            className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 -md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
 
         <div className="mb-4">
-          <label
-            htmlFor="industry"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Industry
-          </label>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
           <input
-            type="text"
-            id="industry"
-            value={industry}
-            onChange={(e) => setIndustry(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            type="email"
+            id="email"
+            name="email"
+            value={formValues.email}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 -md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full"
-        >
+        <div className="mb-4">
+          <label htmlFor="companyCode" className="block text-sm font-medium text-gray-700">Company Code</label>
+          <input
+            type="text"
+            id="companyCode"
+            name="companyCode"
+            value={formValues.companyCode}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 -md shadow-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <button type="submit" className="mt-4 px-4 py-2 bg-indigo-600 text-white font-medium -md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
           Submit
         </button>
       </form>

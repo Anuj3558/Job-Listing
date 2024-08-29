@@ -9,6 +9,9 @@ import AddEducation from "./AddEducation.jsx";
 import AddSkills from "./AddSkills.jsx";
 import YourExperiences from "./YourExperiences.jsx";
 import AddExperience from "./AddExperience.jsx";
+import CompanyDetailsForm from "./CompanyDetailsForm.jsx";
+import CompanyOptions from "./CompanyOptions.jsx";
+import CompanyLogin from "./LoginTOCompant.jsx";
 
 const options = [
   {
@@ -49,6 +52,18 @@ const ComplteProfile = () => {
         return (
           <YourExperiences />
         );
+        case "company":
+          return(
+              <CompanyOptions />
+          );
+          case "createCompany":
+            return(
+              <CompanyDetailsForm />
+            );
+            case "LoginToCompany":
+              return(
+                <CompanyLogin />
+              );
       case "education":
         return (
           <AddEducation />
