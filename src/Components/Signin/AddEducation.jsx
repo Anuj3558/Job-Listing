@@ -106,7 +106,7 @@ const AddEducation = () => {
     console.log("Submitting profile data:", profileData);
 
     try {
-      const URL = "http://localhost:8080/completeprofile";
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/completeprofile`;
       const response = await axios.put(URL, profileData);
       console.log("Profile submitted successfully:", response.data);
       navigate("/dashboard");
