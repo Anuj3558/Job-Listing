@@ -16,7 +16,7 @@ const BlogSingle = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const url = `${process.env.REACT_APP_URL}/singleblog/${id}`; // API endpoint
+        const url = `${process.env.REACT_APP_BACKEND_URL}/singleblog/${id}`; // API endpoint
         const response = await axios.get(url); // Fetch data
         
         setBlog(response.data?.blog); // Set data to state

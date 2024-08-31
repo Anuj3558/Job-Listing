@@ -43,16 +43,6 @@ const Navbar = () => {
     if (uid) {
       try {
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/info`, { uid });
-        const companyResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/get-data`, { uid });
-
-        
-        setCompanyName(companyResponse?.data?.ownerCompany?.name || '');
-        setLogoUrl(companyResponse?.data?.ownerCompany?.logoUrl || '');
-        setCompnayEmail(companyResponse?.data?.ownerCompany?.email || '');
-        setAdmins(companyResponse?.data?.ownerCompany?.admins || []);
-        setOwner(companyResponse?.data?.ownerCompany?.owner || '');
-        setAddress(companyResponse?.data?.ownerCompany?.address || '');
-        console.log(Companyname, address, Companyemail, logoUrl, admins, owner)
         const userData = response.data;
         setEmail(userData?.email);
         setName(userData?.name);
@@ -63,6 +53,19 @@ const Navbar = () => {
         setExperiences(userData?.experience);
         setStatus(userData?.status);
         setSkills(userData?.skills);
+        console.log("user",response)
+        const companyResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/get-data`, { uid });
+        console.log(companyResponse);
+        
+        setCompanyName(companyResponse?.data?.ownerCompany?.name || companyResponse?.data?.company?.name);
+        setLogoUrl(companyResponse?.data?.ownerCompany?.logoUrl || companyResponse?.data?.company?.logoUrl);
+        setCompnayEmail(companyResponse?.data?.ownerCompany?.email || companyResponse?.data?.company?.email);
+        setAdmins(companyResponse?.data?.ownerCompany?.admins || companyResponse?.data?.company?.admins );
+        setOwner(companyResponse?.data?.ownerCompany?.owner || companyResponse?.data?.company?.owner);
+        setAddress(companyResponse?.data?.ownerCompany?.address ||companyResponse?.data?.company?.address);
+        console.log(Companyname, address, Companyemail, logoUrl, admins, owner)
+       
+        
       } catch (error) {
         console.error(error);
         setEmail(null);
@@ -104,7 +107,7 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [Cookies.get("_id")]);
 
   const shouldApplyBackground = [
     "/signup", "/login", "/dashboard", "/add-experience", "/continueas", "/add-skills",

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import CompanyLogin from './Signin/LoginTOCompant';
 
 const JobBoard = () => {
   const [jobs, setJobs] = useState([]);
@@ -42,21 +43,7 @@ const JobBoard = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <h1>Job Board</h1>
-      <ul>
-        {jobs.map((job, index) => (
-          <li key={index}>
-            <h2>{job.title}</h2>
-            <p>{job.company_name}</p>
-            <p>{job.location}</p>
-            <a href={job.url} target="_blank" rel="noopener noreferrer">
-              Apply Now
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <CompanyLogin />
   );
 };
 

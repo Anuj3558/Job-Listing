@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useProfile } from "../context/ProfileContext";
-import axios from "axios";
-
+import Cookies from "js-cookie"
 const JobPortalProfilePage = () => {
   const [profile, setProfile] = useState({
     name: "",
@@ -38,9 +37,7 @@ const JobPortalProfilePage = () => {
     setSkills,
     education,
     setEducation,
-    profileImg,
-    phoneNo,
-    setphone
+    profileImg
     
   } = useProfile();
 
@@ -57,7 +54,7 @@ const JobPortalProfilePage = () => {
       skills: skills,
       resume: resume,
     });
-  }, []);
+  }, [Cookies.get("_id")]);
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingExperience, setIsEditingExperience] = useState(false);
@@ -65,8 +62,13 @@ const JobPortalProfilePage = () => {
   const [isEditingCertifications, setIsEditingCertifications] = useState(false);
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   const [isEditingResume, setIsEditingResume] = useState(false); // State for editing resume
-  const [isEditingAnySection,setIsEditingAnySection ] = useState(false);
-   
+  const isEditingAnySection =
+    isEditingProfile ||
+    isEditingExperience ||
+    isEditingEducation ||
+    isEditingCertifications ||
+    isEditingSkills ||
+    isEditingResume;
 
   
   const [newEducation, setNewEducation] = useState({
@@ -162,41 +164,17 @@ const JobPortalProfilePage = () => {
     }));
   };
 
-    const saveChanges = async() => {
+    const saveChanges = () => {
       // Implement the save logic here
-       
-      
+      console.log("Changes saved:", profile);
 
-      try {
-        const url = "http://localhost:8080/savechanges";
-        const response = await axios.post(url, profile);
-
-        // Assuming response status 200 indicates success
-        if (response.status === 200) {
-          setIsEditingAnySection(false);
-          console.log("Changes saved:", profile);
-          console.log(isEditingAnySection);
-
-          // Reset edit states after saving
-          setIsEditingProfile(false);
-          setIsEditingExperience(false);
-          setIsEditingEducation(false);
-          setIsEditingCertifications(false);
-          setIsEditingSkills(false);
-          setIsEditingResume(false);
-        } else {
-          console.error(
-            "Failed to save changes, status code:",
-            response.status
-          );
-        }
-      } catch (error) {
-        console.error(
-          "An error occurred during save changes ->",
-          error.message
-        );
-      }
-
+      // Reset edit states after saving
+      setIsEditingProfile(false);
+      setIsEditingExperience(false);
+      setIsEditingEducation(false);
+      setIsEditingCertifications(false);
+      setIsEditingSkills(false);
+      setIsEditingResume(false);
     };
 
   return (
@@ -211,7 +189,7 @@ const JobPortalProfilePage = () => {
                 <img
                   src={profileImg}
                   alt="Profile"
-                  className="rounded-full mx-auto"
+                  className="rounded-full"
                 />
               ) : (
                 <button className="w-36  h-36 text-7xl mr-6 bg-purple-400 rounded-full ">
@@ -248,9 +226,7 @@ const JobPortalProfilePage = () => {
                 </>
               )}
               <button
-                onClick={() => {
-                  setIsEditingAnySection(true);
-                  setIsEditingProfile(!isEditingProfile)}}
+                onClick={() => setIsEditingProfile(!isEditingProfile)}
                 className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
               >
                 {isEditingProfile ? "Save" : "Edit"}
@@ -372,9 +348,7 @@ const JobPortalProfilePage = () => {
                 </div>
               )}
               <button
-                onClick={() => {
-                   setIsEditingAnySection(true);
-                  setIsEditingExperience(!isEditingExperience)}}
+                onClick={() => setIsEditingExperience(!isEditingExperience)}
                 className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
               >
                 {isEditingExperience ? "Save" : "Edit"}
@@ -451,9 +425,7 @@ const JobPortalProfilePage = () => {
                 </div>
               )}
               <button
-                onClick={() =>{ 
-                   setIsEditingAnySection(true);
-                  setIsEditingEducation(!isEditingEducation)}}
+                onClick={() => setIsEditingEducation(!isEditingEducation)}
                 className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
               >
                 {isEditingEducation ? "Save" : "Edit"}
@@ -500,9 +472,7 @@ const JobPortalProfilePage = () => {
               )}
               <button
                 onClick={() =>
-                  {
-                     setIsEditingAnySection(true);
-                    setIsEditingCertifications(!isEditingCertifications)}
+                  setIsEditingCertifications(!isEditingCertifications)
                 }
                 className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
               >
@@ -547,9 +517,7 @@ const JobPortalProfilePage = () => {
                 </div>
               )}
               <button
-                onClick={() =>{ 
-                   setIsEditingAnySection(true);
-                  setIsEditingSkills(!isEditingSkills)}}
+                onClick={() => setIsEditingSkills(!isEditingSkills)}
                 className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
               >
                 {isEditingSkills ? "Save" : "Edit"}
@@ -574,9 +542,7 @@ const JobPortalProfilePage = () => {
                 </p>
               )}
               <button
-                onClick={() => {
-                   setIsEditingAnySection(true);
-                  setIsEditingResume(!isEditingResume)}}
+                onClick={() => setIsEditingResume(!isEditingResume)}
                 className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
               >
                 {isEditingResume ? "Save" : "Edit"}
