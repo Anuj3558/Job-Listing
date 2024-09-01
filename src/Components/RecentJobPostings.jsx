@@ -40,7 +40,7 @@ const RecentJobPostings = ({ Title, type }) => {
   useEffect(() => {
     if (Companyname) {
       axios
-        .get("http://localhost:8080/get-jobs", {
+        .get(`{${process.env.REACT_APP_BACKEND_URL}/get-jobs`, {
           params: { companyname: Companyname },
         })
         .then((response) => {
