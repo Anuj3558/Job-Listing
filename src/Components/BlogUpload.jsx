@@ -58,7 +58,7 @@ const BlogUpload = () => {
     formDataToSend.append("image", formData.image);
     setUploading(true);
     try {
-      const url = "http://localhost:8080/submitblog";
+      const url = `${process.env.REACT_APP_BACKEND_URL}/submitblog`;
       const userId = Cookies.get("_id");
       formDataToSend.append("userId", userId);
       const response = await axios.post(url, formDataToSend, {
