@@ -132,7 +132,7 @@ const BlogSingle = () => {
                 {blog.title || "Blog Title"}
               </a>
          
-              <div className="border-none" dangerouslySetInnerHTML={{ __html: blog.content || "Content not available." }} />
+              <div className="border-none" dangerouslySetInnerHTML={{ __html: blog.content.slice(7) || "Content not available." }} />
             
               <div className="flex justify-between items-center mt-6">
                 <div className="flex space-x-4">

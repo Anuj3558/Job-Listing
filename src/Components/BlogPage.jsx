@@ -15,12 +15,16 @@ import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 import Cookies from "js-cookie";
+import { Pagination } from 'antd';
+import 'antd/dist/reset.css'; // Import Ant Design styles
 
 const BlogPosts = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(2); // Set page size
   const navigate = useNavigate();
 
   const touppercase = (text) => {
@@ -58,11 +62,16 @@ const BlogPosts = () => {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to first page on search
   };
 
   const filteredBlogs = (blogs || []).filter(blog =>
     blog.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const indexOfLastBlog = currentPage * pageSize;
+  const indexOfFirstBlog = indexOfLastBlog - pageSize;
+  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
 
   if (loading) {
     return (
@@ -113,7 +122,7 @@ const BlogPosts = () => {
               {filteredBlogs.length === 0 ? (
                 <p>No blog posts available</p>
               ) : (
-                filteredBlogs.map((blog) => (
+                currentBlogs.map((blog) => (
                   <motion.div
                     key={blog._id}
                     initial={{ opacity: 0, y: 50 }}
@@ -142,12 +151,12 @@ const BlogPosts = () => {
                         {blog.title}
                       </a>
                       <p className="text-gray-700 mb-4">
-                        <div className="border-none" dangerouslySetInnerHTML={{ __html: truncateContent(blog.content) || "Content not available." }} />
+                        <div className="border-none" dangerouslySetInnerHTML={{ __html: truncateContent(blog.content.slice(7)) || "Content not available." }} />
                       </p>
                       <div className="flex justify-between items-center text-gray-600">
                         <div className="flex space-x-4">
                           <a href="#" className="flex items-center">
-                            <FaHeart className="mr-2" /> 4 likes
+                            <FaHeart className="mr-2 " /> 4 likes
                           </a>
                           <a href="#" className="flex items-center">
                             <FaComment className="mr-2" /> 06 Comments
@@ -171,6 +180,15 @@ const BlogPosts = () => {
                     </div>
                   </motion.div>
                 ))
+              )}
+              {filteredBlogs.length > pageSize && (
+                <Pagination
+                  current={currentPage}
+                  pageSize={pageSize}
+                  total={filteredBlogs.length}
+                  onChange={(page) => setCurrentPage(page)}
+                  className="mt-8"
+                />
               )}
             </div>
             <div className="w-full lg:w-1/3 pl-0 lg:pl-8">
@@ -286,7 +304,6 @@ const BlogPosts = () => {
                   )}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
