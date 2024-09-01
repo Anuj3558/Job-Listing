@@ -6,11 +6,11 @@ import {
   MdOutlineKeyboardArrowDown,
   MdOutlineKeyboardArrowUp,
 } from "react-icons/md";
-
 import { experience, jobTypes, jobs } from "../Home/utils/data";
-
 import CustomButton from "./ui/CustomButton";
 import JobCard from "./ui/JobCard";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 const FindJobs = () => {
   const [sort, setSort] = useState("Newest");
@@ -18,19 +18,21 @@ const FindJobs = () => {
   const [numPage, setNumPage] = useState(1);
   const [recordCount, setRecordCount] = useState(0);
   const [filteredJobs, setFilteredJobs] = useState(jobs);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [jobLocation, setJobLocation] = useState("");
   const [filterJobTypes, setFilterJobTypes] = useState([]);
   const [filterExp, setFilterExp] = useState([]);
-
   const [isFetching, setIsFetching] = useState(false);
-
   const [showJobTypes, setShowJobTypes] = useState(true);
   const [showExperience, setShowExperience] = useState(true);
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
 
   // Filter jobs based on selected filters
   useEffect(() => {
@@ -48,19 +50,25 @@ const FindJobs = () => {
   }, [filterJobTypes, filterExp]);
 
   const filterJobs = (val) => {
-    if (filterJobTypes.includes(val)) {
-      setFilterJobTypes(filterJobTypes.filter((el) => el !== val));
-    } else {
-      setFilterJobTypes([...filterJobTypes, val]);
-    }
+    setFilterJobTypes((prev) =>
+      prev.includes(val) ? prev.filter((el) => el !== val) : [...prev, val]
+    );
   };
 
   const filterExperience = (val) => {
-    if (filterExp.includes(val)) {
-      setFilterExp(filterExp.filter((el) => el !== val));
-    } else {
-      setFilterExp([...filterExp, val]);
-    }
+    setFilterExp((prev) =>
+      prev.includes(val) ? prev.filter((el) => el !== val) : [...prev, val]
+    );
+  };
+
+  const handleLoadMore = () => {
+    setIsFetching(true);
+    // Simulate fetching more data
+    setTimeout(() => {
+      setPage((prevPage) => prevPage + 1);
+      setIsFetching(false);
+      // Here you would update `filteredJobs` with more data
+    }, 1000);
   };
 
   return (
@@ -76,6 +84,7 @@ const FindJobs = () => {
             <div
               className="flex justify-between mb-3 cursor-pointer"
               onClick={() => setShowJobTypes(!showJobTypes)}
+              aria-expanded={showJobTypes}
             >
               <p className="flex items-center gap-2 font-semibold">
                 <BiBriefcaseAlt2 />
@@ -107,10 +116,11 @@ const FindJobs = () => {
             )}
           </div>
 
-          <div className="py-2 ">
+          <div className="py-2">
             <div
               className="flex justify-between mb-3 cursor-pointer"
               onClick={() => setShowExperience(!showExperience)}
+              aria-expanded={showExperience}
             >
               <p className="flex items-center gap-2 font-semibold">
                 <BsStars />
@@ -143,7 +153,13 @@ const FindJobs = () => {
           </div>
         </div>
 
-        <div className="w-full md:w-5/6 px-5 md:px-0 overflow-y-auto h-screen hide-scrollbar">
+        <motion.div
+          ref={ref}
+          className="w-full md:w-5/6 px-5 md:px-0 overflow-y-auto h-screen hide-scrollbar"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 50 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm md:text-base">
               Showing:{" "}
@@ -161,12 +177,14 @@ const FindJobs = () => {
           {numPage > page && !isFetching && (
             <div className="w-full flex items-center justify-center pt-16">
               <CustomButton
-                title="Load More"
+                title={isFetching ? "Loading..." : "Load More"}
                 containerStyles={`text-blue-600 py-1.5 px-5 focus:outline-none hover:bg-blue-700 hover:text-white -full text-base border border-blue-600`}
+                onClick={handleLoadMore}
+                disabled={isFetching}
               />
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
 
       {/* CSS to hide the scrollbar while keeping the scrolling feature */}

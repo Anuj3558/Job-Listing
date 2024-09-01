@@ -57,6 +57,8 @@ const Dashboard = () => {
           return <PostJob />;
         case "EditJob":
           return <EditJob />;
+        case "Applications":
+            return <CodeEditor />;
         case "Draft":
           return <RecentJobPostings Title={"Jobs in Draft"} type={"Post Job"}/> ; // Placeholder, replace with actual component if needed
         default:
@@ -157,6 +159,16 @@ const Dashboard = () => {
               >
                 <FaPlusCircle className="mr-2" />
                 <span>Post a Job</span>
+              </li>
+              <li
+                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
+                  activeSection === "Applications" ? "bg-blue-100" : ""
+                }`}
+                onClick={() => setActiveSection("Applications")}
+                aria-current={activeSection === "Applications" ? "page" : undefined}
+              >
+                <FaClipboardList className="mr-2" />
+                <span>Applications</span>
               </li>
               <li
                 className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${

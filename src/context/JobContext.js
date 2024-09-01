@@ -16,9 +16,10 @@ export const JobProvider = ({ children }) => {
   const [educationRequirements, setEducationRequirements] = useState([]);
   const [jobType, setJobType] = useState(''); // Default to "Full-time"
   const [status, setStatus] = useState(''); // Default to "Draft"
-  
+  const [jobs, setJobs] = useState([{}]);
   return (
     <JobContext.Provider value={{
+        jobs, setJobs,
       title, setTitle,
       company, setCompany,
       location, setLocation,

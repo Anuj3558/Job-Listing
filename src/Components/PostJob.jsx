@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { FaDatabase, FaMapMarkerAlt } from "react-icons/fa";
-
 import { Popover, message, notification } from "antd";
 import axios from "axios";
 import { useCompany } from "../context/companyContext";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer"; // Updated import
 
 const PostJob = () => {
-  const { logoUrl,Companyname } = useCompany()
+  const { logoUrl, Companyname } = useCompany();
   const [jobDetails, setJobDetails] = useState({
     title: "",
     Companyname: Companyname,
@@ -19,7 +20,6 @@ const PostJob = () => {
     educationRequirements: [],
     jobType: "Full-time",
   });
- ;
   const [editMode, setEditMode] = useState({
     whoWeAreLookingFor: false,
     experienceRequirements: false,
@@ -157,19 +157,43 @@ const PostJob = () => {
     </div>
   );
 
+  const { ref: jobPostRef, inView: jobPostInView } = useInView({ triggerOnce: true });
+  const { ref: sectionRef, inView: sectionInView } = useInView({ triggerOnce: true });
+
   return (
     <div className="max-h-[80vh]">
-      <h1 className="poppint poppins-bold text-2xl">Post a new job</h1>
+      <motion.h1
+        className="poppint poppins-bold text-2xl"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        Post a new job
+      </motion.h1>
       {loading && (
         <div className="flex justify-center items-center py-6">
           <div className="spinner"></div>
         </div>
       )}
-      <section className="py-12 w-[100%]">
-        <div className="container mx-auto flex flex-wrap justify-center">
+      <section
+        className="py-12 w-[100%]"
+        ref={sectionRef}
+      >
+        <motion.div
+          className="container mx-auto flex flex-wrap justify-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: sectionInView ? 1 : 0, y: sectionInView ? 0 : 20 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="w-full lg:w-2/3">
             {/* Job Post */}
-            <div className="bg-white p-6 shadow-md flex flex-col lg:flex-row mb-6">
+            <motion.div
+              className="bg-white p-6 shadow-md flex flex-col lg:flex-row mb-6"
+              ref={jobPostRef}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: jobPostInView ? 1 : 0, x: jobPostInView ? 0 : -20 }}
+              transition={{ duration: 0.5 }}
+            >
               <div className="lg:w-1/4">
                 <img src={logoUrl} alt="Job Image" className="w-full h-auto" />
               </div>
@@ -186,7 +210,7 @@ const PostJob = () => {
                         placeholder="Job Title"
                         className="text-2xl font-bold border p-2 w-full"
                       />
-                      <p  className="text-2xl font-bold  p-2 w-full">{jobDetails.Companyname}</p>
+                      <p className="text-2xl font-bold p-2 w-full">{jobDetails.Companyname}</p>
                     </div>
                   </div>
                   
@@ -222,7 +246,7 @@ const PostJob = () => {
                     value={jobDetails.location}
                     onChange={handleChange}
                     placeholder="Location"
-                    className="mt-2 flex items-center text-gray-600 border p-2 w-full"
+                    className="mt-4 flex items-center text-gray-600 border p-2 w-full"
                   />
                   <input
                     type="text"
@@ -234,10 +258,15 @@ const PostJob = () => {
                   />
                 </form>
               </div>
-            </div>
+            </motion.div>
 
             {/* Who We Are Looking For */}
-            <section className="bg-white p-6 shadow-md mb-6">
+            <motion.section
+              className="bg-white p-6 shadow-md mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: sectionInView ? 1 : 0, y: sectionInView ? 0 : 20 }}
+              transition={{ duration: 0.5 }}
+            >
               <h2 className="text-xl font-bold">Who We Are Looking For</h2>
               {editMode.whoWeAreLookingFor ? (
                 <textarea
@@ -268,10 +297,15 @@ const PostJob = () => {
                   Edit
                 </button>
               )}
-            </section>
+            </motion.section>
 
             {/* Experience Requirements */}
-            <section className="bg-white p-6 shadow-md mb-6">
+            <motion.section
+              className="bg-white p-6 shadow-md mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: sectionInView ? 1 : 0, y: sectionInView ? 0 : 20 }}
+              transition={{ duration: 0.5 }}
+            >
               <h2 className="text-xl font-bold">Experience Requirements</h2>
               {jobDetails.experienceRequirements.map((item, index) => (
                 <div key={index} className="flex items-center mb-2">
@@ -310,15 +344,20 @@ const PostJob = () => {
                 <button
                   type="button"
                   onClick={() => setEditMode({ ...editMode, experienceRequirements: true })}
-                  className="bg-green-500 ml-3  text-white px-4 py-2 mt-2"
+                  className="bg-green-500 ml-3 text-white px-4 py-2 mt-2"
                 >
                   Edit
                 </button>
               )}
-            </section>
+            </motion.section>
 
             {/* Job Features */}
-            <section className="bg-white p-6 shadow-md mb-6">
+            <motion.section
+              className="bg-white p-6 shadow-md mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: sectionInView ? 1 : 0, y: sectionInView ? 0 : 20 }}
+              transition={{ duration: 0.5 }}
+            >
               <h2 className="text-xl font-bold">Job Features</h2>
               {jobDetails.jobFeatures.map((item, index) => (
                 <div key={index} className="flex items-center mb-2">
@@ -362,10 +401,15 @@ const PostJob = () => {
                   Edit
                 </button>
               )}
-            </section>
+            </motion.section>
 
             {/* Education Requirements */}
-            <section className="bg-white p-6 shadow-md mb-6">
+            <motion.section
+              className="bg-white p-6 shadow-md mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: sectionInView ? 1 : 0, y: sectionInView ? 0 : 20 }}
+              transition={{ duration: 0.5 }}
+            >
               <h2 className="text-xl font-bold">Education Requirements</h2>
               {jobDetails.educationRequirements.map((item, index) => (
                 <div key={index} className="flex items-center mb-2">
@@ -409,7 +453,7 @@ const PostJob = () => {
                   Edit
                 </button>
               )}
-            </section>
+            </motion.section>
 
             {/* Post Job Button */}
             <div className="flex justify-end">
@@ -432,7 +476,7 @@ const PostJob = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );

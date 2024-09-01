@@ -9,6 +9,8 @@ import { handleError, handleSuccess } from "./Home/utils/utils";
 import { auth } from "../FirebaseAuth/firebaseconfig";
 import { useProfile } from "../context/ProfileContext";
 import { useCompany } from "../context/companyContext";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,22 +19,19 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { Companyname, address, Companyemail, logoUrl, admins, owner, setCompanyName,setLogoUrl,setCompnayEmail,setAdmins,setOwner,setAddress } = useCompany();
-  const {
-    setSelectedCity,
-    userType,
-    setUserType,
-    name,
-    setName,
-    email,
-    setEmail,
-    profileImg,
-    setProfileImg,
-    setEducation,
-    setExperiences,
-    setStatus,
-    setSkills,
-  } = useProfile();
+  const { Companyname, address, Companyemail, logoUrl, admins, owner, setCompanyName, setLogoUrl, setCompnayEmail, setAdmins, setOwner, setAddress } = useCompany();
+  const { setSelectedCity, userType, setUserType, name, setName, email, setEmail, profileImg, setProfileImg, setEducation, setExperiences, setStatus, setSkills } = useProfile();
+
+  const { ref: navbarRef, inView: navbarInView } = useInView({ threshold: 0 });
+  const navbarControls = useAnimation();
+
+  useEffect(() => {
+    if (navbarInView) {
+      navbarControls.start({ opacity: 1, y: 0 });
+    } else {
+      navbarControls.start({ opacity: 0.8, y: -10 });
+    }
+  }, [navbarInView, navbarControls]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -53,18 +52,14 @@ const Navbar = () => {
         setExperiences(userData?.experience);
         setStatus(userData?.status);
         setSkills(userData?.skills);
-        console.log("user",response)
+
         const companyResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/get-data`, { uid });
-        console.log(companyResponse);
-        
         setCompanyName(companyResponse?.data?.ownerCompany?.name || companyResponse?.data?.company?.name);
         setLogoUrl(companyResponse?.data?.ownerCompany?.logoUrl || companyResponse?.data?.company?.logoUrl);
         setCompnayEmail(companyResponse?.data?.ownerCompany?.email || companyResponse?.data?.company?.email);
         setAdmins(companyResponse?.data?.ownerCompany?.admins || companyResponse?.data?.company?.admins );
         setOwner(companyResponse?.data?.ownerCompany?.owner || companyResponse?.data?.company?.owner);
-        setAddress(companyResponse?.data?.ownerCompany?.address ||companyResponse?.data?.company?.address);
-        console.log(Companyname, address, Companyemail, logoUrl, admins, owner)
-       
+        setAddress(companyResponse?.data?.ownerCompany?.address || companyResponse?.data?.company?.address);
         
       } catch (error) {
         console.error(error);
@@ -115,9 +110,15 @@ const Navbar = () => {
   ].includes(location.pathname);
 
   return (
-    <header className={`left-0 poppins-regular w-full text-white z-50 ease-in-out duration-500 transform ${
-      isScrolled || shouldApplyBackground ? "fixed bg-[#000000CC] text-white shadow-md" : "text-[#230d0d] absolute translate-y"
-    }`}>
+    <motion.header
+      ref={navbarRef}
+      animate={navbarControls}
+      initial={{ opacity: 0.8, y: -10 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className={`left-0 poppins-regular w-full text-white z-50 ease-in-out duration-500 transform ${
+        isScrolled || shouldApplyBackground ? "fixed bg-[#000000CC] text-white shadow-md" : "text-[#230d0d] absolute translate-y"
+      }`}
+    >
       <div className="container mx-auto">
         <div className="flex items-center justify-between py-4">
           <div id="logo" className="md:ml-60">
@@ -165,7 +166,13 @@ const Navbar = () => {
         </div>
       </div>
       {isMobileMenuOpen && (
-        <nav id="mobile-menu" className="md:hidden bg-white border-t border-gray-200">
+        <motion.nav
+          id="mobile-menu"
+          className="md:hidden bg-white border-t border-gray-200"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
           <ul className="flex flex-col space-y-2 p-4 text-purple-500">
             <li><Link to="/" className="hover:text-purple-500">Home</Link></li>
             <li><Link to="/aboutus" className="hover:text-purple-500">About Us</Link></li>
@@ -194,9 +201,9 @@ const Navbar = () => {
               </li>
             )}
           </ul>
-        </nav>
+        </motion.nav>
       )}
-    </header>
+    </motion.header>
   );
 };
 

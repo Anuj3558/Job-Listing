@@ -11,12 +11,21 @@ import {
 import Banner from "./Home/ui/Banner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import Skeleton from "react-loading-skeleton";
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const BlogPosts = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1
+  });
+
   const handleAllBlogs = async () => {
     try {
       const url = `${process.env.REACT_APP_BACKEND_URL}/handleblogs`;
@@ -42,33 +51,68 @@ const BlogPosts = () => {
   };
 
   const handleBlogClick = (blogId) => {
-    navigate(`/blog/${blogId}`); // Ensure this path matches the dynamic route defined in App.js
+    navigate(`/blog/${blogId}`);
   };
-  if (loading) return <p>Loading...</p>;
+
+  if (loading) {
+    return (
+      <div>
+        <Banner page={"Blog"} />
+        <section className="py-16 px-14">
+          <div className="container mx-auto flex flex-wrap">
+            <div className="w-full lg:w-2/3">
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="bg-white lg:shadow-lg mb-8">
+                  <Skeleton height={200} />
+                  <div className="px-6 py-4">
+                    <Skeleton width={150} />
+                    <Skeleton count={3} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="w-full lg:w-1/3 pl-0 lg:pl-8">
+              <div className="bg-white lg:shadow-lg p-6 mb-8">
+                <Skeleton height={50} />
+                <Skeleton height={30} />
+              </div>
+              <div className="bg-white lg:shadow-lg p-6 mb-8">
+                <Skeleton height={24} />
+                <Skeleton count={4} />
+              </div>
+              <div className="bg-white lg:shadow-lg p-6">
+                <Skeleton height={24} />
+                <Skeleton count={6} />
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   if (error) return <p>Error: {error}</p>;
-
-
 
   return (
     <div>
-      {/* Banner Area */}
       <Banner page={"Blog"} />
 
-      {/* Blog Posts Area */}
-      <section className="py-16  px-14">
+      <section className="py-16 px-14">
         <div className="container mx-auto">
           <div className="flex flex-wrap">
             <div className="w-full lg:w-2/3">
               {blogs.map((blog) => (
-                <div
+                <motion.div
                   key={blog._id}
-                  onClick={() => {
-                    handleBlogClick(blog._id);
-                  }}
-                  className="bg-white lg:shadow-lg mb-8"
+                  ref={ref}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 50 }}
+                  transition={{ duration: 0.6 }}
+                  onClick={() => handleBlogClick(blog._id)}
+                  className="bg-white lg:shadow-lg mb-8 cursor-pointer"
                 >
                   <img
-                    className="w-full h-[40vh] p-5 object-cover "
+                    className="w-full h-[40vh] p-5 object-cover"
                     src={blog.image}
                     alt="Post"
                   />
@@ -114,12 +158,10 @@ const BlogPosts = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-              {/* Additional posts can be replicated here if needed */}
             </div>
             <div className="w-full lg:w-1/3 pl-0 lg:pl-8">
-              {/* Search Widget */}
               <div className="bg-white lg:shadow-lg p-6 mb-8">
                 <form className="relative">
                   <input
@@ -136,7 +178,6 @@ const BlogPosts = () => {
                 </form>
               </div>
 
-              {/* Portfolio Widget */}
               <div className="bg-white lg:shadow-lg p-6 mb-8 text-center">
                 <img
                   src="img/blog/user2.jpg"
@@ -167,7 +208,6 @@ const BlogPosts = () => {
                 </div>
               </div>
 
-              {/* Category Widget */}
               <div className="bg-white lg:shadow-lg p-6 mb-8">
                 <h4 className="text-xl font-semibold mb-4">Post Categories</h4>
                 <ul className="space-y-2">
@@ -216,7 +256,6 @@ const BlogPosts = () => {
                 </ul>
               </div>
 
-              {/* Recent Posts Widget */}
               <div className="bg-white lg:shadow-lg p-6 mb-8">
                 <h4 className="text-xl font-semibold mb-4">Recent Posts</h4>
                 <div className="space-y-4">
@@ -236,12 +275,9 @@ const BlogPosts = () => {
                       <p className="text-gray-500 text-sm">02 hours ago</p>
                     </div>
                   </div>
-
-                  {/* Additional recent posts can be replicated here if needed */}
                 </div>
               </div>
 
-              {/* Archive Widget */}
               <div className="bg-white lg:shadow-lg p-6">
                 <h4 className="text-xl font-semibold mb-4">Post Archive</h4>
                 <ul className="space-y-2">
@@ -263,8 +299,6 @@ const BlogPosts = () => {
                     </a>
                     <span>59</span>
                   </li>
-
-                  {/* Additional archive entries can be replicated here if needed */}
                 </ul>
               </div>
             </div>
