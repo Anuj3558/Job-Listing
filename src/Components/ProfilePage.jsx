@@ -217,7 +217,7 @@ const JobPortalProfilePage = () => {
                 <img
                   src={profileImg}
                   alt="Profile"
-                  className="rounded-full"
+                  className="rounded-full w-36 h-36 text-7xl mx-auto"
                 />
               ) : (
                 <button className="w-36 h-36 text-7xl mr-6 bg-purple-400 rounded-full">

@@ -3,28 +3,27 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import Banner from "./Home/ui/Banner";
+import SkeletonSidebar from "./SkeletonSidebar"; // Import the SkeletonSidebar component
 
 const BlogSingle = () => {
   const { id } = useParams(); // Get the blog ID from URL parameters
   const [blog, setBlog] = useState(null);
   const [error, setError] = useState(null);
-  const [userP,setUserP]=useState({
-    userName:"",
-    userUrl:""
-  })
+  const [userP, setUserP] = useState({
+    userName: "",
+    userUrl: ""
+  });
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const url = `${process.env.REACT_APP_BACKEND_URL}/singleblog/${id}`; // API endpoint
         const response = await axios.get(url); // Fetch data
-        
         setBlog(response.data?.blog); // Set data to state
         setUserP({
           userName: response.data?.userName,
           userUrl: response.data?.userProfileImg,
         });
-        
       } catch (error) {
         setError("Failed to fetch blog post");
         console.error(error); // Log error
@@ -41,7 +40,57 @@ const BlogSingle = () => {
   }
 
   if (!blog) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        {/* Banner Area */}
+        <Banner page={"Blog Post "} />
+
+        {/* Blog Posts Area */}
+        <section className="py-16 bg-gray-100 px-14">
+          <div className="container mx-auto flex flex-wrap">
+            <div className="lg:w-2/3 w-full pr-4 lg:pr-8">
+              <div className="bg-white p-6 lg:shadow-md mb-8">
+                <div className="w-full h-[40vh] bg-gray-300 mb-4"></div>
+                <div className="h-6 bg-gray-300 mb-4"></div>
+                <div className="h-4 bg-gray-300 mb-4"></div>
+                <div className="h-4 bg-gray-300 mb-6"></div>
+                <div className="h-4 bg-gray-300 mb-4"></div>
+                <div className="h-4 bg-gray-300 mb-4"></div>
+              </div>
+
+              {/* Comment Section */}
+              <section className="py-16 bg-white">
+                <div className="container mx-auto">
+                  <div className="h-6 bg-gray-300 mb-6"></div>
+                  <div className="h-4 bg-gray-300 mb-6"></div>
+                </div>
+              </section>
+
+              {/* Comment Form Area */}
+              <section className="py-16 bg-gray-100">
+                <div className="container mx-auto">
+                  <div className="h-6 bg-gray-300 mb-6"></div>
+                  <div className="flex flex-wrap">
+                    <div className="w-full lg:w-1/3 pr-4">
+                      <div className="h-4 bg-gray-300 mb-4"></div>
+                      <div className="h-4 bg-gray-300 mb-4"></div>
+                      <div className="h-4 bg-gray-300 mb-4"></div>
+                    </div>
+                    <div className="w-full lg:w-2/3 pl-4">
+                      <div className="h-4 bg-gray-300 mb-4"></div>
+                      <div className="h-6 bg-gray-300 mb-4"></div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* Sidebar */}
+            <SkeletonSidebar /> {/* Show skeleton loading */}
+          </div>
+        </section>
+      </>
+    );
   }
 
   return (
@@ -63,7 +112,7 @@ const BlogSingle = () => {
                 {blog.categories && blog.categories.length > 0 ? (
                   blog.categories.map((category) => (
                     <li key={category._id}>
-                      <a href="#" className="text-blue-600 hover:underline">
+                      <a href="#" className="text-red-600 hover:underline">
                         {category.value}
                       </a>
                     </li>
@@ -82,9 +131,9 @@ const BlogSingle = () => {
               >
                 {blog.title || "Blog Title"}
               </a>
-              <div className="mt-4 text-gray-600">
-                <p>{blog.content || "Content not available."}</p>
-              </div>
+         
+              <div className="border-none" dangerouslySetInnerHTML={{ __html: blog.content || "Content not available." }} />
+            
               <div className="flex justify-between items-center mt-6">
                 <div className="flex space-x-4">
                   <a

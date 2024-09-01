@@ -5,7 +5,7 @@ import Select from "react-select";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useProfile } from "../context/ProfileContext";
-
+import Cookies from "js-cookie"
 const categoryOptions = [
   { value: "technology", label: "Technology" },
   { value: "health", label: "Health" },
@@ -57,6 +57,8 @@ const BlogUpload = () => {
     setUploading(true);
     try {
       const url = "http://localhost:8080/submitblog";
+      const userId = Cookies.get("_id")
+      formDataToSend.append("userId", userId);
       const response = await axios.post(url, formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
