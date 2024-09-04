@@ -59,7 +59,7 @@ function App() {
             <Route path="blog/:id" element={<BlogSingle />} />
             <Route path="price" element={<Pricing />} />
             <Route path="/category" element={<Category />} />
-            <Route path="/jobdetails/:id" element={<JobDetails />} />
+            <Route path="/job-detail/:id" element={<JobDetails />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/test" element={<CompanyOptions />} />
             

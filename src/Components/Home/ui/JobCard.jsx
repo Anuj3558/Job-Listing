@@ -4,20 +4,21 @@ import { Link } from "react-router-dom";
 
 const JobCard = ({ job }) => {
   return (
-    <Link to={`/job-detail/${job?.id}`}>
+    <Link to={`/job-detail/${job?._id}`}>
       <div
         className="w-full md:w-[30rem]  2xl:w-[32rem] h-[22rem] md:h-[20rem] bg-white flex flex-col justify-between shadow-xl 
                 -lg px-5 py-6 hover:shadow-2xl transition-shadow duration-300 "
       >
         <div className="flex rounded-full flex-col md:flex-row md:items-center">
           <img
-            src={job?.company?.profileUrl}
-            alt={job?.company?.name}
+            src={job.ProfileUrl}
+            alt={job.company
+            }
             className="w-16 h-16 rounded-full shadow-sm mx-auto md:mx-0"
           />
 
           <div className="flex flex-col flex-grow mt-4 md:mt-0 md:ml-3 items-center md:items-start text-center md:text-left">
-            <p className="text-xl font-bold truncate">{job?.jobTitle}</p>
+            <p className="text-xl font-bold truncate">{job.title}</p>
             <p className="flex gap-2 items-center justify-center text-gray-600 mt-2 md:mt-0">
               <GoLocation className="text-slate-700 text-base ml-1" />
               {job?.location}
@@ -27,7 +28,7 @@ const JobCard = ({ job }) => {
 
         <div className="py-4 text-gray-700 flex-grow">
           <p className="text-sm leading-relaxed">
-            {job?.detail[0]?.desc?.slice(0, 150) + "..."}
+            {job?.description?.slice(0, 150) + "..."}
           </p>
         </div>
 

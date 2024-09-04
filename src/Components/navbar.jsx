@@ -11,17 +11,17 @@ import { useProfile } from "../context/ProfileContext";
 import { useCompany } from "../context/companyContext";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-
+import { useJobContext } from "../context/JobContext";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const { setJobs, jobs } = useJobContext();
   const { Companyname, address, Companyemail, logoUrl, admins, owner, setCompanyName, setLogoUrl, setCompnayEmail, setAdmins, setOwner, setAddress } = useCompany();
   const { setSelectedCity, userType, setUserType, name, setName, email, setEmail, profileImg, setProfileImg, setEducation, setExperiences, setStatus, setSkills } = useProfile();
-
+  const [page, setPage] = useState(1);
   const { ref: navbarRef, inView: navbarInView } = useInView({ threshold: 0 });
   const navbarControls = useAnimation();
 
@@ -60,7 +60,7 @@ const Navbar = () => {
         setAdmins(companyResponse?.data?.ownerCompany?.admins || companyResponse?.data?.company?.admins );
         setOwner(companyResponse?.data?.ownerCompany?.owner || companyResponse?.data?.company?.owner);
         setAddress(companyResponse?.data?.ownerCompany?.address || companyResponse?.data?.company?.address);
-        
+       
       } catch (error) {
         console.error(error);
         setEmail(null);
@@ -90,7 +90,18 @@ const Navbar = () => {
   const handleDashboardClick = () => {
     navigate(userType === "employee" || userType === "company" ? "/dashboard" : "/continueas");
   };
-
+  useEffect(() => {
+    // Fetch jobs when the component mounts or when page changes
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-all-jobs?page=${page}`)
+      .then((response) => {
+        const fetchedJobs = response?.data?.jobs || [];
+        setJobs(fetchedJobs);
+         // Assume totalPages is returned
+      })
+      .catch((error) => {
+        console.error("Error fetching jobs:", error);
+      });
+  }, [page, setJobs]);
   useEffect(() => {
     GetUserData();
 

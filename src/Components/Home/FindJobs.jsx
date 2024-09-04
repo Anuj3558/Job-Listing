@@ -6,38 +6,47 @@ import {
   MdOutlineKeyboardArrowDown,
   MdOutlineKeyboardArrowUp,
 } from "react-icons/md";
-import { experience, jobTypes, jobs } from "../Home/utils/data";
+import { experience, jobTypes } from "../Home/utils/data";
 import CustomButton from "./ui/CustomButton";
 import JobCard from "./ui/JobCard";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { useJobContext } from "../../context/JobContext";
+import axios from "axios";
 
 const FindJobs = () => {
+  const { setJobs, jobs } = useJobContext();
   const [sort, setSort] = useState("Newest");
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
-  const [recordCount, setRecordCount] = useState(0);
-  const [filteredJobs, setFilteredJobs] = useState(jobs);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [jobLocation, setJobLocation] = useState("");
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [filterJobTypes, setFilterJobTypes] = useState([]);
   const [filterExp, setFilterExp] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [showJobTypes, setShowJobTypes] = useState(true);
   const [showExperience, setShowExperience] = useState(true);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
   });
 
-  // Filter jobs based on selected filters
+  useEffect(() => {
+    // Fetch jobs when the component mounts or when page changes
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-all-jobs?page=${page}`)
+      .then((response) => {
+        const fetchedJobs = response?.data?.jobs || [];
+        setJobs(fetchedJobs);
+        setNumPage(response?.data?.totalPages || 1); // Assume totalPages is returned
+      })
+      .catch((error) => {
+        console.error("Error fetching jobs:", error);
+      });
+  }, [page, setJobs]);
+
   useEffect(() => {
     let filtered = jobs;
-
+  
     if (filterJobTypes.length > 0) {
       filtered = filtered.filter((job) => filterJobTypes.includes(job.type));
     }
@@ -47,7 +56,7 @@ const FindJobs = () => {
     }
 
     setFilteredJobs(filtered);
-  }, [filterJobTypes, filterExp]);
+  }, [jobs, filterJobTypes, filterExp]);
 
   const filterJobs = (val) => {
     setFilterJobTypes((prev) =>
@@ -62,13 +71,11 @@ const FindJobs = () => {
   };
 
   const handleLoadMore = () => {
-    setIsFetching(true);
-    // Simulate fetching more data
-    setTimeout(() => {
+    if (page < numPage && !isFetching) {
+      setIsFetching(true);
       setPage((prevPage) => prevPage + 1);
       setIsFetching(false);
-      // Here you would update `filteredJobs` with more data
-    }, 1000);
+    }
   };
 
   return (
