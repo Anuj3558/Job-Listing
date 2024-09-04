@@ -20,7 +20,23 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const { Companyname, address, Companyemail, logoUrl, admins, owner, setCompanyName, setLogoUrl, setCompnayEmail, setAdmins, setOwner, setAddress } = useCompany();
-  const { setSelectedCity, userType, setUserType, name, setName, email, setEmail, profileImg, setProfileImg, setEducation, setExperiences, setStatus, setSkills } = useProfile();
+  const {
+    setSelectedCity,
+    userType,
+    setUserType,
+    name,
+    setName,
+    email,
+    setEmail,
+    profileImg,
+    setProfileImg,
+    setEducation,
+    setExperiences,
+    setStatus,
+    setSkills,
+    setphone,
+    setCertifications,
+  } = useProfile();
 
   const { ref: navbarRef, inView: navbarInView } = useInView({ threshold: 0 });
   const navbarControls = useAnimation();
@@ -52,6 +68,9 @@ const Navbar = () => {
         setExperiences(userData?.experience);
         setStatus(userData?.status);
         setSkills(userData?.skills);
+        setCertifications(userData?.certifications);
+        setphone(userData?.phone);
+
 
         const companyResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/get-data`, { uid });
         setCompanyName(companyResponse?.data?.ownerCompany?.name || companyResponse?.data?.company?.name);
@@ -67,10 +86,6 @@ const Navbar = () => {
         setName(null);
         setProfileImg(null);
       }
-    } else {
-      setEmail(null);
-      setName(null);
-      setProfileImg(null);
     }
   };
 
