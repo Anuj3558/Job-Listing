@@ -181,7 +181,7 @@ const JobPortalProfilePage = () => {
 
   const saveChanges = async () => {
     try {
-      const url = "http://localhost:8080/savechanges";
+      const url = `${process.env.REACT_APP_BACKEND_URL}/savechanges`;;
       const response = await axios.post(url, profile);
 
       if (response.status === 200) {
