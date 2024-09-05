@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { HeroImage, HeroImg } from '../assets';
-import { f1, f2, t1, t2, t3, t4 } from '../asset';
+import { f1, f2, t1, t2, t3, t4, t5 } from '../asset';
 import Testimonials from './Home/testimonial';
 import Banner from './Home/ui/Banner';
 
@@ -100,15 +100,16 @@ const AboutUs = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto text-center">
           <div className="max-w-md mx-auto mb-8">
-            <h1 className="text-4xl font-bold">Experienced Mentor Team</h1>
+            <h1 className="text-4xl font-bold">Developer Team</h1>
             <p className="mt-4 text-gray-600">Who are in extremely love with eco-friendly systems.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mx-8">
             {[
-              { name: 'Ethel Davis', role: 'Managing Director (Sales)', img: t1 },
-              { name: 'Rodney Cooper', role: 'Creative Art Director (Project)', img: t2 },
-              { name: 'Dora Walker', role: 'Senior Core Developer', img: t3 },
-              { name: 'Lena Keller', role: 'Creative Content Developer', img: t4 }
+              { name: 'Anuj Loharkar', role: 'Full Stack Developer', img: t1 },
+              { name: 'Swaraj Mahadik', role: 'Full Sxtack Developer', img: t2 },
+              { name: 'Tejashree Panaskar', role: 'Senior Core Developer', img: t3 },
+              { name: 'Ashish Ram', role: 'Management Head', img: t4 },
+              { name: 'Kartavya', role: 'Research and Development', img: t5 }
             ].map((team, index) => (
               <motion.div
                 key={index}

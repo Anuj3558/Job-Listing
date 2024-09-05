@@ -12,4 +12,5 @@ import t1 from "./img/pages/t1.jpg"
 import t2 from "./img/pages/t2.jpg"
 import t3 from "./img/pages/t3.jpg"
 import t4 from "./img/pages/t4.jpg"
-export { o1,o2,o3,o4,o5,o6,f1,f2,t1,t2,t3,t4};
+import t5 from "./img/pages/t5.jpg";
+export { o1,o2,o3,o4,o5,o6,f1,f2,t1,t2,t3,t4,t5};
