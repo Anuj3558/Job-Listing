@@ -103,24 +103,24 @@ const AboutUs = () => {
             <h1 className="text-4xl font-bold">Developer Team</h1>
             <p className="mt-4 text-gray-600">Who are in extremely love with eco-friendly systems.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mx-8">
+          <div className="grid grid-cols-3 gap-8 mx-8">
             {[
               { name: 'Anuj Loharkar', role: 'Full Stack Developer', img: t1 },
-              { name: 'Swaraj Mahadik', role: 'Full Sxtack Developer', img: t2 },
+              { name: 'Swaraj Mahadik', role: 'Full Stack Developer', img: t2 },
               { name: 'Tejashree Panaskar', role: 'Senior Core Developer', img: t3 },
               { name: 'Ashish Ram', role: 'Management Head', img: t4 },
               { name: 'Kartavya', role: 'Research and Development', img: t5 }
             ].map((team, index) => (
               <motion.div
                 key={index}
-                className="single-team"
+                className={`team-member flex flex-col items-center ${index < 3 ? 'row-start-auto' : 'row-span-2'}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <div className="thumb relative">
-                  <img src={team.img} alt={team.name} className="w-full" />
-                  <div className="absolute inset-0 bg-black opacity-75 flex items-center justify-center space-x-4 text-white hidden group-hover:flex">
+                  <img src={team.img} alt={team.name} className="w-64 h-72 object-cover -full" />
+                  <div className="absolute inset-0 bg-black opacity-75 flex items-center justify-center space-x-2 text-white hidden group-hover:flex">
                     <a href="#"><i className="fa fa-facebook"></i></a>
                     <a href="#"><i className="fa fa-twitter"></i></a>
                     <a href="#"><i className="fa fa-linkedin"></i></a>
