@@ -5,7 +5,7 @@ import Banner from './Home/ui/Banner';
 import { useJobContext } from '../context/JobContext';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-
+import { TbPointFilled } from "react-icons/tb";
 const JobDetails = () => {
   const location = useLocation();
   const { jobs } = useJobContext();
@@ -154,7 +154,7 @@ const JobDetails = () => {
               <ul className="space-y-4">
                 {jobDetail.experienceRequirements && jobDetail.experienceRequirements.map((requirement, index) => (
                   <li key={index} className="flex items-start">
-                    <FaList className="w-6 h-6 mr-2" />
+                    <TbPointFilled  className='mr-5'/>
                     <span>{requirement}</span>
                   </li>
                 ))}
@@ -167,7 +167,7 @@ const JobDetails = () => {
               <ul className="space-y-4">
                 {jobDetail.jobFeatures && jobDetail.jobFeatures.map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <FaList className="w-6 h-6 mr-2" />
+              <TbPointFilled className='mr-5'/>
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -180,7 +180,7 @@ const JobDetails = () => {
               <ul className="space-y-4">
                 {jobDetail.educationRequirements && jobDetail.educationRequirements.map((requirement, index) => (
                   <li key={index} className="flex items-start">
-                    <FaList className="w-6 h-6 mr-2" />
+                    <TbPointFilled className='mr-5'/>
                     <span>{requirement}</span>
                   </li>
                 ))}

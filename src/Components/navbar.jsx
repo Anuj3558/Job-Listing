@@ -12,16 +12,34 @@ import { useCompany } from "../context/companyContext";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useJobContext } from "../context/JobContext";
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const { setJobs, jobs } = useJobContext();
+const{jobs,setJobs}=useJobContext();
+const [page, setPage] = useState(1);
   const { Companyname, address, Companyemail, logoUrl, admins, owner, setCompanyName, setLogoUrl, setCompnayEmail, setAdmins, setOwner, setAddress } = useCompany();
-  const { setSelectedCity, userType, setUserType, name, setName, email, setEmail, profileImg, setProfileImg, setEducation, setExperiences, setStatus, setSkills } = useProfile();
-  const [page, setPage] = useState(1);
+  const {
+    setSelectedCity,
+    userType,
+    setUserType,
+    name,
+    setName,
+    email,
+    setEmail,
+    profileImg,
+    setProfileImg,
+    setEducation,
+    setExperiences,
+    setStatus,
+    setSkills,
+    setphone,
+    setCertifications,
+  } = useProfile();
+
   const { ref: navbarRef, inView: navbarInView } = useInView({ threshold: 0 });
   const navbarControls = useAnimation();
 
@@ -52,6 +70,9 @@ const Navbar = () => {
         setExperiences(userData?.experience);
         setStatus(userData?.status);
         setSkills(userData?.skills);
+        setCertifications(userData?.certifications);
+        setphone(userData?.phone);
+
 
         const companyResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/get-data`, { uid });
         setCompanyName(companyResponse?.data?.ownerCompany?.name || companyResponse?.data?.company?.name);
@@ -60,20 +81,28 @@ const Navbar = () => {
         setAdmins(companyResponse?.data?.ownerCompany?.admins || companyResponse?.data?.company?.admins );
         setOwner(companyResponse?.data?.ownerCompany?.owner || companyResponse?.data?.company?.owner);
         setAddress(companyResponse?.data?.ownerCompany?.address || companyResponse?.data?.company?.address);
-       
+        
       } catch (error) {
         console.error(error);
         setEmail(null);
         setName(null);
         setProfileImg(null);
       }
-    } else {
-      setEmail(null);
-      setName(null);
-      setProfileImg(null);
     }
   };
 
+  useEffect(() => {
+    // Fetch jobs when the component mounts or when page changes
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-all-jobs?page=${page}`)
+      .then((response) => {
+        const fetchedJobs = response?.data?.jobs || [];
+        setJobs(fetchedJobs);
+      // Assume totalPages is returned
+      })
+      .catch((error) => {
+        console.error("Error fetching jobs:", error);
+      });
+  }, [page, setJobs]);
   const HandleLog = async () => {
     try {
       await signOut(auth);
@@ -90,18 +119,7 @@ const Navbar = () => {
   const handleDashboardClick = () => {
     navigate(userType === "employee" || userType === "company" ? "/dashboard" : "/continueas");
   };
-  useEffect(() => {
-    // Fetch jobs when the component mounts or when page changes
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-all-jobs?page=${page}`)
-      .then((response) => {
-        const fetchedJobs = response?.data?.jobs || [];
-        setJobs(fetchedJobs);
-         // Assume totalPages is returned
-      })
-      .catch((error) => {
-        console.error("Error fetching jobs:", error);
-      });
-  }, [page, setJobs]);
+
   useEffect(() => {
     GetUserData();
 

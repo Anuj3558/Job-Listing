@@ -11,7 +11,7 @@ export const ProfileProvider = ({ children }) => {
   const [ parser,setParser]=useState();
   const [selectedCity, setSelectedCity] = useState("");
   const [newCity, setNewCity] = useState("");
-  const [phoneNo,setphone]=useState();
+  const [phone,setphone]=useState();
   const [userType, setUserType] = useState("");
   const [resume, setResume] = useState(null);
   const [experiences, setExperiences] = useState([
@@ -24,6 +24,7 @@ export const ProfileProvider = ({ children }) => {
   const [skills, setSkills] = useState([]);
   const [status, setStatus] = useState("");
   const [education, setEducation] = useState([]); // Add state for education
+  const [certifications,setCertifications] = useState([]);
   const [profileData, setProfileData] = useState({
     name: "",
     title: "",
@@ -35,8 +36,8 @@ export const ProfileProvider = ({ children }) => {
     certifications: [""],
     skills: [],
     resume: "",
-    phoneNo,
-    setphone
+    
+    
   });
 
   return (
@@ -70,6 +71,10 @@ export const ProfileProvider = ({ children }) => {
         setProfileData,
         profileImg,
         setProfileImg,
+        certifications,
+        setCertifications,
+        setphone,
+        phone,
       }}
     >
       {children}

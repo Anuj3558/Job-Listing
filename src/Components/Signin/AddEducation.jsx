@@ -18,7 +18,7 @@ const AddEducation = () => {
     selectedCity,
     name,
     email,
-    resume,
+    
     experiences,
     skills,
     education,
@@ -86,7 +86,7 @@ const AddEducation = () => {
 
   // Submit the education list and navigate
   // Submit the education list and navigate
-  const handleSubmit = async () => {
+  const   handleSubmit = async () => {
     // Constructing the profile data directly from the latest state values
     const profileData = {
       name: name,
@@ -98,7 +98,7 @@ const AddEducation = () => {
       education: education,
       certifications: [""],
       skills: skills,
-      resume: resume,
+      
       status: "Completed",
       userType: userType
     };
