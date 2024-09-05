@@ -46,12 +46,12 @@ const JobPortalProfilePage = () => {
     certifications,
   } = useProfile();
 
-  console.log("Profile Changes ->");
-  console.log("skills", skills);
-  console.log("phone", phone);
-  console.log("education", education);
-  console.log("certifications", certifications);
-  console.log("name", name);
+  // console.log("Profile Changes ->");
+  // console.log("skills", skills);
+  // console.log("phone", phone);
+  // console.log("education", education);
+  // console.log("certifications", certifications);
+  // console.log("name", name);
 
   useEffect(() => {
     setProfile({
