@@ -1,25 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaMapMarkerAlt, FaDatabase, FaList } from 'react-icons/fa';
-import { useLocation } from 'react-router-dom';
+import { FaHeart, FaMapMarkerAlt, FaDatabase } from 'react-icons/fa';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Banner from './Home/ui/Banner';
 import { useJobContext } from '../context/JobContext';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { TbPointFilled } from "react-icons/tb";
+import { useProfile } from '../context/ProfileContext';
+import axios from 'axios';
+import { message } from 'antd';
+
 const JobDetails = () => {
   const location = useLocation();
   const { jobs } = useJobContext();
+  const Navigate = useNavigate()
+  const { userType } = useProfile(); // Get userType from ProfileContext
   const [jobDetail, setJobDetails] = useState(null);
 
   // Extracting job ID or any other parameter from the URL
   const jobId = location.pathname.slice(12); // Assuming job ID is the last segment in the URL
-  console.log(jobId);
-
+  const HandleApplyjob=async (e)=>{
+    if(userType===""){
+     message.warning("Please login to Apply")
+      Navigate("/login")
+    }
+    else{
+      Navigate(`/resume-check/${jobId}`)
+    }
+ }
   useEffect(() => {
+    console.log(userType)
     // Update job details when the component mounts or when jobs or jobId changes
     const foundJob = jobs.find((job) => job._id === jobId);
     setJobDetails(foundJob || {});
-  }, [jobId, jobs]);
+  }, [jobId, jobs,userType]);
 
   if (!jobDetail) {
     return (
@@ -127,8 +141,14 @@ const JobDetails = () => {
                     <h6 className="text-lg text-gray-500">{jobDetail.company || "Company Name"}</h6>
                   </div>
                   <div className="flex space-x-4">
-                    <button className="text-red-500"><FaHeart /></button>
-                    <button className="bg-purple-500 text-white px-4 py-2 hover:bg-purple-600">Apply</button>
+                  {(userType === "employee" || userType === "") && <button className="text-red-500"><FaHeart /></button>}
+                    {/* Conditionally show the 'Apply' button for employees only */}
+                    {(userType === 'employee' || userType === "") && (
+                      <button onClick={HandleApplyjob} className="bg-purple-500 text-white px-4 py-2 hover:bg-purple-600">
+                        Apply
+                      </button>
+                      
+                    )}
                   </div>
                 </div>
                 <p className="mt-4 text-gray-700">
@@ -154,7 +174,7 @@ const JobDetails = () => {
               <ul className="space-y-4">
                 {jobDetail.experienceRequirements && jobDetail.experienceRequirements.map((requirement, index) => (
                   <li key={index} className="flex items-start">
-                    <TbPointFilled  className='mr-5'/>
+                    <TbPointFilled className='mr-5' />
                     <span>{requirement}</span>
                   </li>
                 ))}
@@ -163,11 +183,11 @@ const JobDetails = () => {
 
             {/* Job Features */}
             <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Job Features & Overviews</h4>
+              <h4 className="text-2xl font-bold mb-4">Job Features</h4>
               <ul className="space-y-4">
                 {jobDetail.jobFeatures && jobDetail.jobFeatures.map((feature, index) => (
                   <li key={index} className="flex items-start">
-              <TbPointFilled className='mr-5'/>
+                    <TbPointFilled className='mr-5' />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -177,14 +197,9 @@ const JobDetails = () => {
             {/* Education Requirements */}
             <div className="bg-white p-6 shadow-md lg:mb-6">
               <h4 className="text-2xl font-bold mb-4">Education Requirements</h4>
-              <ul className="space-y-4">
-                {jobDetail.educationRequirements && jobDetail.educationRequirements.map((requirement, index) => (
-                  <li key={index} className="flex items-start">
-                    <TbPointFilled className='mr-5'/>
-                    <span>{requirement}</span>
-                  </li>
-                ))}
-              </ul>
+              <p className="text-gray-700">
+                {jobDetail.educationRequirements || "Education requirements go here..."}
+              </p>
             </div>
           </div>
 
@@ -192,35 +207,22 @@ const JobDetails = () => {
           <div className="w-full lg:w-1/3 lg:pl-8">
             {/* Jobs by Location */}
             <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-xl font-bold mb-4">Jobs by Location</h4>
-              <ul className="space-y-4">
-                {/* Replace with your location data */}
-                <li className="flex items-center"><FaMapMarkerAlt className="w-6 h-6 mr-2" /> Location 1</li>
-                <li className="flex items-center"><FaMapMarkerAlt className="w-6 h-6 mr-2" /> Location 2</li>
-                <li className="flex items-center"><FaMapMarkerAlt className="w-6 h-6 mr-2" /> Location 3</li>
-              </ul>
+              <h4 className="text-2xl font-bold mb-4">Jobs by Location</h4>
+              <p className="text-gray-700">
+                {jobDetail.location || "Location"}
+              </p>
             </div>
 
             {/* Top Rated Jobs */}
             <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-xl font-bold mb-4">Top Rated Jobs</h4>
-              <ul className="space-y-4">
-                {/* Replace with your top rated job data */}
-                <li className="flex items-center"><FaHeart className="w-6 h-6 mr-2" /> Job 1</li>
-                <li className="flex items-center"><FaHeart className="w-6 h-6 mr-2" /> Job 2</li>
-                <li className="flex items-center"><FaHeart className="w-6 h-6 mr-2" /> Job 3</li>
-              </ul>
+              <h4 className="text-2xl font-bold mb-4">Top Rated Jobs</h4>
+              <p className="text-gray-700">List of top-rated jobs goes here...</p>
             </div>
 
             {/* Jobs by Category */}
             <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-xl font-bold mb-4">Jobs by Category</h4>
-              <ul className="space-y-4">
-                {/* Replace with your category data */}
-                <li className="flex items-center"><FaList className="w-6 h-6 mr-2" /> Category 1</li>
-                <li className="flex items-center"><FaList className="w-6 h-6 mr-2" /> Category 2</li>
-                <li className="flex items-center"><FaList className="w-6 h-6 mr-2" /> Category 3</li>
-              </ul>
+              <h4 className="text-2xl font-bold mb-4">Jobs by Category</h4>
+              <p className="text-gray-700">List of jobs by category goes here...</p>
             </div>
           </div>
         </div>

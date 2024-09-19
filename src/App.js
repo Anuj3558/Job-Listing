@@ -31,6 +31,8 @@ import ProfileStatus from "./Components/ProfileStatus";
 import ComplteProfile from "./Components/Signin/ContinueAs";
 import JobBoard from "./Components/text";
 import CompanyOptions from "./Components/Signin/CompanyOptions";
+import ResumeUpload from "./applyjobs/ResumeUpload ";
+import UserProfilePage from "./applyjobs/userProf";
 
 function App() {
   const [currLocation, setCurrLocation] = useState("");
@@ -86,7 +88,14 @@ function App() {
               path="/company-details"
               element={<ProtectedRoute element={<CompanyDetailsForm />} />}
             />
-        
+         <Route
+              path="/resume-check/:id"
+              element={ <ResumeUpload />}
+            />
+               <Route
+              path="/confirm-apply/:id"
+              element={ <UserProfilePage />}
+            />
           
             
           </Routes>
