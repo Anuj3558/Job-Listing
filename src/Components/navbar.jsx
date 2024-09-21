@@ -173,17 +173,18 @@ const Navbar = () => {
   }, [Cookies.get("_id")]);
 
   const shouldApplyBackground = [
-    "/signup",
-    "/login",
-    "/dashboard",
-    "/add-experience",
-    "/continueas",
+    "/signup", 
+    "/login", 
+    "/dashboard", 
+    "/add-experience", 
+    "/continueas", 
     "/add-skills",
-    "/your-experiences",
-    "/upload-resume",
-    "/cities",
-    "/company-details",
-  ].includes(location.pathname);
+    "/your-experiences", 
+    "/upload-resume", 
+    "/cities", 
+    "/company-details", 
+    "/confirm-apply"
+  ].includes(location.pathname) || location.pathname.includes("/resume-check")||location.pathname.includes("/confirm-apply");
 
   return (
     <motion.header
