@@ -25,6 +25,11 @@ const Analytics = () => {
     fetchUserJobAnalytics();
   }, []);
 
+  // Calculate the number of pending applications
+  const pendingApplicationsCount = analyticsData.filter(
+    (application) => application.appliedStatus === 'pending'
+  ).length;
+
   return (
     <div className="flex-1 p-6">
       {/* Stats Overview */}
@@ -39,7 +44,7 @@ const Analytics = () => {
         </div>
         <div className="bg-white p-4 shadow">
           <h3 className="text-lg font-semibold">Pending Applications</h3>
-          <p className="text-2xl font-bold text-yellow-600">12</p>
+          <p className="text-2xl font-bold text-yellow-600">{pendingApplicationsCount}</p>
         </div>
       </div>
 
