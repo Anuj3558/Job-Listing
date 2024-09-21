@@ -98,7 +98,7 @@ function App() {
           
             
           </Routes>
-          {/* <Footer /> */}
+          <Footer />
         </DashboardProvider>
       </ProfileProvider>
     </BrowserRouter>
