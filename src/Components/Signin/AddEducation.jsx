@@ -18,7 +18,6 @@ const AddEducation = () => {
     selectedCity,
     name,
     email,
-    
     experiences,
     skills,
     education,
@@ -86,37 +85,38 @@ const AddEducation = () => {
 
   // Submit the education list and navigate
   // Submit the education list and navigate
-  const   handleSubmit = async () => {
-    // Constructing the profile data directly from the latest state values
-    const profileData = {
-      name: name,
-      title: "",
-      location: selectedCity,
-      email: email,
-      phone: "",
-      experience: experiences,
-      education: education,
-      certifications: [""],
-      skills: skills,
-      
-      status: "Completed",
-      userType: userType
-    };
-
-    console.log("Submitting profile data:", profileData);
-
-    try {
-      const URL = `${process.env.REACT_APP_BACKEND_URL}/completeprofile`;
-      const response = await axios.put(URL, profileData);
-      console.log("Profile submitted successfully:", response.data);
-      navigate("/dashboard");
-    } catch (error) {
-      console.error(
-        "Error submitting profile:",
-        error.response ? error.response.data : error.message
-      );
-    }
+const handleSubmit = async () => {
+  const profileData = {
+    name: name || "",
+    title: "",
+    location: selectedCity || "",
+    email: email || "",
+    phone: "", // If this is not handled, provide a default empty string
+    experience: experiences || [], // Should be an array of objects with { company, role, duration }
+    education: education.map((edu) => ({
+      course: edu.course || "",
+      institute: edu.institute || "",
+      yearOfCompletion: edu.yearOfCompletion || "",
+    })), // Ensure yearOfCompletion is a string
+   
+    skills: skills || [], // Should be an array of strings
+    status: "Completed",
+    userType: userType || "",
   };
+
+  try {
+    const URL = `${process.env.REACT_APP_BACKEND_URL}/completeprofile`;
+    const response = await axios.put(URL, profileData);
+    console.log("Profile submitted successfully:", response.data);
+    navigate("/dashboard");
+  } catch (error) {
+    console.error(
+      "Error submitting profile:",
+      error.response ? error.response.data : error.message
+    );
+  }
+};
+
 
   return (
     <div className="pt-32 flex flex-col items-center w-full min-h-screen bg-gray-100">

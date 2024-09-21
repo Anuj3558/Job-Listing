@@ -13,22 +13,22 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
-import 'react-loading-skeleton/dist/skeleton.css';
+import "react-loading-skeleton/dist/skeleton.css";
 import Cookies from "js-cookie";
-import { Pagination } from 'antd';
-import 'antd/dist/reset.css'; // Import Ant Design styles
+import { Pagination } from "antd";
+import "antd/dist/reset.css"; // Import Ant Design styles
 
 const BlogPosts = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(2); // Set page size
   const navigate = useNavigate();
 
   const touppercase = (text) => {
-    return text ? text.toUpperCase() : '';
+    return text ? text.toUpperCase() : "";
   };
 
   const handleAllBlogs = async () => {
@@ -65,7 +65,7 @@ const BlogPosts = () => {
     setCurrentPage(1); // Reset to first page on search
   };
 
-  const filteredBlogs = (blogs || []).filter(blog =>
+  const filteredBlogs = (blogs || []).filter((blog) =>
     blog.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -114,6 +114,7 @@ const BlogPosts = () => {
 
   return (
     <div>
+        
       <Banner page={"Blog"} />
       <section className="py-16 px-14">
         <div className="container mx-auto">
@@ -151,7 +152,14 @@ const BlogPosts = () => {
                         {blog.title}
                       </a>
                       <p className="text-gray-700 mb-4">
-                        <div className="border-none" dangerouslySetInnerHTML={{ __html: truncateContent(blog.content.slice(7)) || "Content not available." }} />
+                        <div
+                          className="border-none"
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              truncateContent(blog.content.slice(7)) ||
+                              "Content not available.",
+                          }}
+                        />
                       </p>
                       <div className="flex justify-between items-center text-gray-600">
                         <div className="flex space-x-4">
@@ -247,13 +255,19 @@ const BlogPosts = () => {
                   {blogs.length > 0 && (
                     <React.Fragment>
                       <li className="flex justify-between">
-                        <a href="#" className="text-gray-700 hover:text-blue-500">
+                        <a
+                          href="#"
+                          className="text-gray-700 hover:text-blue-500"
+                        >
                           Technology
                         </a>
                         <span>37</span>
                       </li>
                       <li className="flex justify-between">
-                        <a href="#" className="text-gray-700 hover:text-blue-500">
+                        <a
+                          href="#"
+                          className="text-gray-700 hover:text-blue-500"
+                        >
                           Lifestyle
                         </a>
                         <span>24</span>
@@ -293,10 +307,16 @@ const BlogPosts = () => {
                   {/* Replace static content with dynamic content */}
                   {blogs.length > 0 && (
                     <React.Fragment>
-                      <a href="#" className="bg-gray-200 px-3 py-1 text-gray-700 rounded-lg hover:bg-gray-300">
+                      <a
+                        href="#"
+                        className="bg-gray-200 px-3 py-1 text-gray-700 rounded-lg hover:bg-gray-300"
+                      >
                         Technology
                       </a>
-                      <a href="#" className="bg-gray-200 px-3 py-1 text-gray-700 rounded-lg hover:bg-gray-300">
+                      <a
+                        href="#"
+                        className="bg-gray-200 px-3 py-1 text-gray-700 rounded-lg hover:bg-gray-300"
+                      >
                         Lifestyle
                       </a>
                       {/* Add more tags as needed */}

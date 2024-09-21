@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaHeart } from "react-icons/fa";
 import Banner from "./Home/ui/Banner";
 import SkeletonSidebar from "./SkeletonSidebar"; // Import the SkeletonSidebar component
+import CommentSection from "./CommentSection";
+import Cookies from "js-cookie";
 
 const BlogSingle = () => {
   const { id } = useParams(); // Get the blog ID from URL parameters
   const [blog, setBlog] = useState(null);
   const [error, setError] = useState(null);
+  const userId = Cookies.get("_id");
+  const [likeCount, setLikeCount] = useState();
+
   const [userP, setUserP] = useState({
     userName: "",
-    userUrl: ""
+    userUrl: "",
   });
+  const [isLiked, setIsLiked] = useState(false); // Track if the blog is liked
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -24,6 +30,12 @@ const BlogSingle = () => {
           userName: response.data?.userName,
           userUrl: response.data?.userProfileImg,
         });
+
+        // Check if the user has already liked the blog
+        const userLiked = response.data.blog.likes.some(
+          (like) => like.userId === userId
+        );
+        setIsLiked(userLiked); // Update isLiked state
       } catch (error) {
         setError("Failed to fetch blog post");
         console.error(error); // Log error
@@ -33,7 +45,38 @@ const BlogSingle = () => {
     if (id) {
       fetchBlog();
     }
-  }, [id]);
+  }, [id, userId]); // Add userId to dependency array to re-fetch if it changes
+  useEffect(() => {
+    console.log("likes->", blog?.likes);
+
+    if (blog?.likes && Array.isArray(blog.likes)) {
+      // Check if the user has liked the blog
+      blog.likes.forEach((like) => {
+        if (like === userId) {
+          setIsLiked(true);
+        }
+      });
+      // Set the like count
+      setLikeCount(blog.likes.length);
+    } else {
+      // Default to 0 if likes is undefined or not an array
+      setLikeCount(0);
+    }
+  }, [blog, isLiked]);
+
+  const handleLike = async () => {
+    const userId = Cookies.get("_id");
+    try {
+      const url = `${process.env.REACT_APP_BACKEND_URL}/like/${id}`; // API endpoint for liking the blog
+      const response = await axios.post(url, { userId }); // Send userId as an object
+
+      // Assuming response.data.likes returns the updated like count
+      setBlog((prev) => ({ ...prev, likes: response.data.likes })); // Update state with new like count
+      setIsLiked(true); // Update local like state to true
+    } catch (error) {
+      console.error("Error liking the blog post:", error);
+    }
+  };
 
   if (error) {
     return <div>{error}</div>;
@@ -84,7 +127,6 @@ const BlogSingle = () => {
                 </div>
               </section>
             </div>
-
             {/* Sidebar */}
             <SkeletonSidebar /> {/* Show skeleton loading */}
           </div>
@@ -131,20 +173,33 @@ const BlogSingle = () => {
               >
                 {blog.title || "Blog Title"}
               </a>
-         
-              <div className="border-none" dangerouslySetInnerHTML={{ __html: blog.content.slice(7) || "Content not available." }} />
-            
+
+              <div
+                className="border-none"
+                dangerouslySetInnerHTML={{
+                  __html: blog.content.slice(7) || "Content not available.",
+                }}
+              />
+
               <div className="flex justify-between items-center mt-6">
                 <div className="flex space-x-4">
-                  <a
-                    href="#"
-                    className="flex items-center text-gray-600 hover:text-gray-800"
-                  >
-                    <span className="mr-2">
-                      <i className="fa fa-heart"></i>
-                    </span>
-                    {blog.likes || "0"} likes
-                  </a>
+                  <FaHeart
+                    onClick={() => {
+                      setIsLiked(!isLiked);
+
+                      if (!isLiked) {
+                        setLikeCount(likeCount + 2);
+                        handleLike();
+                      } else {
+                        setLikeCount(likeCount - 1);
+                        handleLike();
+                      }
+                    }}
+                    className={`mr-2 ${
+                      isLiked ? "text-red-600" : "text-gray-400"
+                    }`}
+                  />
+                  <span>{likeCount}</span> {/* Show like count */}
                   <a
                     href="#"
                     className="flex items-center text-gray-600 hover:text-gray-800"
@@ -152,7 +207,7 @@ const BlogSingle = () => {
                     <span className="mr-2">
                       <i className="fa fa-comment"></i>
                     </span>
-                    {blog.comments || "0"} Comments
+                    {blog.comments.length || "0"} Comments
                   </a>
                 </div>
                 <div className="flex space-x-4">
@@ -173,91 +228,7 @@ const BlogSingle = () => {
             </div>
 
             {/* Comment Section */}
-            <section className="py-16 bg-white">
-              <div className="container mx-auto">
-                <h5 className="text-lg font-bold mb-6">
-                  {blog.comments && blog.comments.length > 0
-                    ? `${blog.comments.length} Comments`
-                    : "No Comments"}
-                </h5>
-                <div className="mb-6">
-                  {blog.comments && blog.comments.length > 0 ? (
-                    blog.comments.map((comment) => (
-                      <div key={comment._id} className="flex items-start mb-6">
-                        <img
-                          className="w-12 h-12 rounded-full mr-4"
-                          src={
-                            comment.avatar || "https://via.placeholder.com/48"
-                          }
-                          alt="Commenter"
-                        />
-                        <div>
-                          <h5 className="font-bold text-gray-800">
-                            <a href="#" className="hover:underline">
-                              {comment.name || "Anonymous"}
-                            </a>
-                          </h5>
-                          <p className="text-sm text-gray-600">
-                            {comment.date || "Date not available"}
-                          </p>
-                          <p className="text-gray-800 mt-2">
-                            {comment.text || "No comment text available."}
-                          </p>
-                          <a href="#" className="text-blue-600 hover:underline">
-                            reply
-                          </a>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No comments available.</p>
-                  )}
-                </div>
-              </div>
-            </section>
-
-            {/* Comment Form Area */}
-            <section className="py-16 bg-gray-100">
-              <div className="container mx-auto">
-                <h5 className="text-lg font-bold mb-6">Leave a Reply</h5>
-                <div className="flex flex-wrap">
-                  <div className="w-full lg:w-1/3 pr-4">
-                    <input
-                      name="name"
-                      placeholder="Enter your name"
-                      className="w-full mb-4 p-3 border border-gray-300 "
-                      required
-                      type="text"
-                    />
-                    <input
-                      name="email"
-                      placeholder="Enter your email"
-                      className="w-full mb-4 p-3 border border-gray-300 "
-                      required
-                      type="email"
-                    />
-                    <input
-                      name="subject"
-                      placeholder="Subject"
-                      className="w-full mb-4 p-3 border border-gray-300 "
-                      required
-                      type="text"
-                    />
-                  </div>
-                  <div className="w-full lg:w-2/3 pl-4">
-                    <textarea
-                      className="w-full mb-4 p-3 border border-gray-300 "
-                      name="message"
-                      placeholder="Message"
-                      required
-                    ></textarea>
-                    <button className="bg-blue-600 text-white py-2 px-4 hover:bg-blue-700">
-                      Comment
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <CommentSection blogId={id} />
           </div>
 
           {/* Sidebar */}
@@ -290,9 +261,7 @@ const BlogSingle = () => {
                   {userP.userName || "Author Name"}
                 </a>
               </h4>
-              <p className="text-gray-600 mb-4">
-                {blog.authorBio || "Author bio not available."}
-              </p>
+              
               <div className="flex space-x-4">
                 <a href="#" className="text-blue-600 hover:underline">
                   <i className="fa fa-facebook"></i>
@@ -330,10 +299,7 @@ const BlogSingle = () => {
               </ul>
             </div>
 
-            <div className="bg-white p-6 lg:shadow-md">
-              <h4 className="font-bold text-gray-800 mb-4">Recent Posts</h4>
-              <div className="space-y-4">{/* Add recent posts here */}</div>
-            </div>
+            
           </div>
         </div>
       </section>

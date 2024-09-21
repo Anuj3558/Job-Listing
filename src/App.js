@@ -62,11 +62,10 @@ function App() {
             <Route path="/job-detail/:id" element={<JobDetails />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/test" element={<CompanyOptions />} />
-            
+
             <Route
               path="/continueas"
               element={<ProfileStatus element={<ComplteProfile />} />}
-            
             />
 
             {/* Protected routes */}
@@ -86,11 +85,8 @@ function App() {
               path="/company-details"
               element={<ProtectedRoute element={<CompanyDetailsForm />} />}
             />
-        
-          
-            
           </Routes>
-          <Footer />
+          {/* <Footer /> */}
         </DashboardProvider>
       </ProfileProvider>
     </BrowserRouter>
