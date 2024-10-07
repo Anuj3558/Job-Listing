@@ -1,134 +1,90 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { FaSearch, FaHeart } from "react-icons/fa";
+import { FaSearch, FaHeart, FaComment, FaFacebook, FaTwitter, FaDribbble, FaBehance } from "react-icons/fa";
 import Banner from "./Home/ui/Banner";
-import SkeletonSidebar from "./SkeletonSidebar"; // Import the SkeletonSidebar component
+import SkeletonSidebar from "./SkeletonSidebar";
 import CommentSection from "./CommentSection";
 import Cookies from "js-cookie";
 
 const BlogSingle = () => {
-  const { id } = useParams(); // Get the blog ID from URL parameters
+  const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [error, setError] = useState(null);
   const userId = Cookies.get("_id");
-  const [likeCount, setLikeCount] = useState();
-
-  const [userP, setUserP] = useState({
-    userName: "",
-    userUrl: "",
-  });
-  const [isLiked, setIsLiked] = useState(false); // Track if the blog is liked
+  const [likeCount, setLikeCount] = useState(0);
+  const [userP, setUserP] = useState({ userName: "", userUrl: "" });
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const url = `${process.env.REACT_APP_BACKEND_URL}/singleblog/${id}`; // API endpoint
-        const response = await axios.get(url); // Fetch data
-        setBlog(response.data?.blog); // Set data to state
+        const url = `${process.env.REACT_APP_BACKEND_URL}/singleblog/${id}`;
+        const response = await axios.get(url);
+        setBlog(response.data?.blog);
         setUserP({
           userName: response.data?.userName,
           userUrl: response.data?.userProfileImg,
         });
-
-        // Check if the user has already liked the blog
-        const userLiked = response.data.blog.likes.some(
-          (like) => like.userId === userId
-        );
-        setIsLiked(userLiked); // Update isLiked state
+        const userLiked = response.data.blog.likes.some(like => like.userId === userId);
+        setIsLiked(userLiked);
       } catch (error) {
         setError("Failed to fetch blog post");
-        console.error(error); // Log error
+        console.error(error);
       }
     };
 
     if (id) {
       fetchBlog();
     }
-  }, [id, userId]); // Add userId to dependency array to re-fetch if it changes
-  useEffect(() => {
-    console.log("likes->", blog?.likes);
+  }, [id, userId]);
 
+  useEffect(() => {
     if (blog?.likes && Array.isArray(blog.likes)) {
-      // Check if the user has liked the blog
-      blog.likes.forEach((like) => {
-        if (like === userId) {
-          setIsLiked(true);
-        }
-      });
-      // Set the like count
+      setIsLiked(blog.likes.some(like => like === userId));
       setLikeCount(blog.likes.length);
     } else {
-      // Default to 0 if likes is undefined or not an array
       setLikeCount(0);
     }
-  }, [blog, isLiked]);
+  }, [blog, userId]);
 
   const handleLike = async () => {
-    const userId = Cookies.get("_id");
     try {
-      const url = `${process.env.REACT_APP_BACKEND_URL}/like/${id}`; // API endpoint for liking the blog
-      const response = await axios.post(url, { userId }); // Send userId as an object
-
-      // Assuming response.data.likes returns the updated like count
-      setBlog((prev) => ({ ...prev, likes: response.data.likes })); // Update state with new like count
-      setIsLiked(true); // Update local like state to true
+      const url = `${process.env.REACT_APP_BACKEND_URL}/like/${id}`;
+      const response = await axios.post(url, { userId });
+      setBlog(prev => ({ ...prev, likes: response.data.likes }));
+      setIsLiked(!isLiked);
+      setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
     } catch (error) {
       console.error("Error liking the blog post:", error);
     }
   };
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-center text-red-600 py-8 text-xl">{error}</div>;
   }
 
   if (!blog) {
     return (
       <>
-        {/* Banner Area */}
-        <Banner page={"Blog Post "} />
-
-        {/* Blog Posts Area */}
-        <section className="py-16 bg-gray-100 px-14">
+        <Banner page="Blog Post" />
+        <section className="py-16 bg-gray-100 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto flex flex-wrap">
-            <div className="lg:w-2/3 w-full pr-4 lg:pr-8">
-              <div className="bg-white p-6 lg:shadow-md mb-8">
-                <div className="w-full h-[40vh] bg-gray-300 mb-4"></div>
-                <div className="h-6 bg-gray-300 mb-4"></div>
-                <div className="h-4 bg-gray-300 mb-4"></div>
-                <div className="h-4 bg-gray-300 mb-6"></div>
-                <div className="h-4 bg-gray-300 mb-4"></div>
-                <div className="h-4 bg-gray-300 mb-4"></div>
+            <div className="w-full lg:w-2/3 pr-0 lg:pr-8 mb-8 lg:mb-0">
+              <div className="bg-white p-6 rounded-lg shadow-md mb-8 animate-pulse">
+                <div className="w-full h-64 bg-gray-300 mb-4 rounded"></div>
+                <div className="h-6 bg-gray-300 mb-4 rounded"></div>
+                <div className="h-4 bg-gray-300 mb-4 rounded"></div>
+                <div className="h-4 bg-gray-300 mb-6 rounded"></div>
+                <div className="h-4 bg-gray-300 mb-4 rounded"></div>
+                <div className="h-4 bg-gray-300 mb-4 rounded"></div>
               </div>
-
-              {/* Comment Section */}
-              <section className="py-16 bg-white">
-                <div className="container mx-auto">
-                  <div className="h-6 bg-gray-300 mb-6"></div>
-                  <div className="h-4 bg-gray-300 mb-6"></div>
-                </div>
-              </section>
-
-              {/* Comment Form Area */}
-              <section className="py-16 bg-gray-100">
-                <div className="container mx-auto">
-                  <div className="h-6 bg-gray-300 mb-6"></div>
-                  <div className="flex flex-wrap">
-                    <div className="w-full lg:w-1/3 pr-4">
-                      <div className="h-4 bg-gray-300 mb-4"></div>
-                      <div className="h-4 bg-gray-300 mb-4"></div>
-                      <div className="h-4 bg-gray-300 mb-4"></div>
-                    </div>
-                    <div className="w-full lg:w-2/3 pl-4">
-                      <div className="h-4 bg-gray-300 mb-4"></div>
-                      <div className="h-6 bg-gray-300 mb-4"></div>
-                    </div>
-                  </div>
-                </div>
-              </section>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <div className="h-6 bg-gray-300 mb-6 rounded"></div>
+                <div className="h-4 bg-gray-300 mb-6 rounded"></div>
+              </div>
             </div>
-            {/* Sidebar */}
-            <SkeletonSidebar /> {/* Show skeleton loading */}
+            <SkeletonSidebar />
           </div>
         </section>
       </>
@@ -137,160 +93,113 @@ const BlogSingle = () => {
 
   return (
     <>
-      {/* Banner Area */}
-      <Banner page={"Blog Post "} />
-
-      {/* Blog Posts Area */}
-      <section className="py-16 bg-gray-100 px-14">
+      <Banner page="Blog Post" />
+      <section className="py-16 bg-gray-100 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto flex flex-wrap">
-          <div className="lg:w-2/3 w-full pr-4 lg:pr-8">
-            <div className="bg-white p-6 lg:shadow-md mb-8">
+          <div className="w-full lg:w-2/3 pr-0 lg:pr-8 mb-8 lg:mb-0">
+            <article className="bg-white p-6 rounded-lg shadow-md mb-8">
               <img
-                className="w-full h-[40vh] object-cover mb-4"
-                src={blog.image || "https://via.placeholder.com/600x400"}
-                alt="Blog Post"
+                className="w-full h-64 object-cover mb-6 rounded-lg"
+                src={blog.image || "/placeholder.svg?height=400&width=600"}
+                alt={blog.title}
               />
-              <ul className="flex space-x-4 mb-4">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {blog.categories && blog.categories.length > 0 ? (
                   blog.categories.map((category) => (
-                    <li key={category._id}>
-                      <a href="#" className="text-red-600 hover:underline">
-                        {category.value}
-                      </a>
-                    </li>
+                    <span key={category._id} className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                      {category.value}
+                    </span>
                   ))
                 ) : (
-                  <li>
-                    <a href="#" className="text-blue-600 hover:underline">
-                      Category
-                    </a>
-                  </li>
+                  <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                    Uncategorized
+                  </span>
                 )}
-              </ul>
-              <a
-                href="#"
-                className="text-2xl font-bold text-gray-800 hover:underline"
-              >
-                {blog.title || "Blog Title"}
-              </a>
-
+              </div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                {blog.title || "Untitled Blog Post"}
+              </h1>
               <div
-                className="border-none"
+                className="prose max-w-none mb-6"
                 dangerouslySetInnerHTML={{
                   __html: blog.content.slice(7) || "Content not available.",
                 }}
               />
-
-              <div className="flex justify-between items-center mt-6">
-                <div className="flex space-x-4">
-                  <FaHeart
-                    onClick={() => {
-                      setIsLiked(!isLiked);
-
-                      if (!isLiked) {
-                        setLikeCount(likeCount + 2);
-                        handleLike();
-                      } else {
-                        setLikeCount(likeCount - 1);
-                        handleLike();
-                      }
-                    }}
-                    className={`mr-2 ${
-                      isLiked ? "text-red-600" : "text-gray-400"
-                    }`}
-                  />
-                  <span>{likeCount}</span> {/* Show like count */}
-                  <a
-                    href="#"
-                    className="flex items-center text-gray-600 hover:text-gray-800"
+              <div className="flex justify-between items-center border-t border-gray-200 pt-4">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={handleLike}
+                    className={`flex items-center space-x-1 ${
+                      isLiked ? "text-red-600" : "text-gray-600"
+                    } hover:text-red-600 transition-colors duration-200`}
+                    aria-label={isLiked ? "Unlike post" : "Like post"}
                   >
-                    <span className="mr-2">
-                      <i className="fa fa-comment"></i>
-                    </span>
-                    {blog.comments.length || "0"} Comments
-                  </a>
+                    <FaHeart />
+                    <span>{likeCount}</span>
+                  </button>
+                  <div className="flex items-center space-x-1 text-gray-600">
+                    <FaComment />
+                    <span>{blog.comments.length || "0"} Comments</span>
+                  </div>
                 </div>
                 <div className="flex space-x-4">
-                  <a href="#" className="text-blue-600 hover:underline">
-                    <i className="fa fa-facebook"></i>
-                  </a>
-                  <a href="#" className="text-blue-400 hover:underline">
-                    <i className="fa fa-twitter"></i>
-                  </a>
-                  <a href="#" className="text-pink-500 hover:underline">
-                    <i className="fa fa-dribbble"></i>
-                  </a>
-                  <a href="#" className="text-blue-500 hover:underline">
-                    <i className="fa fa-behance"></i>
-                  </a>
+                  <FaFacebook className="text-blue-600 hover:text-blue-700 cursor-pointer" />
+                  <FaTwitter className="text-blue-400 hover:text-blue-500 cursor-pointer" />
+                  <FaDribbble className="text-pink-500 hover:text-pink-600 cursor-pointer" />
+                  <FaBehance className="text-blue-500 hover:text-blue-600 cursor-pointer" />
                 </div>
               </div>
-            </div>
-
-            {/* Comment Section */}
+            </article>
             <CommentSection blogId={id} />
           </div>
-
-          {/* Sidebar */}
-          <div className="lg:w-1/3 w-full pl-4 lg:pl-8">
-            <div className="bg-white p-6 lg:shadow-md mb-8">
-              <form className="flex items-center border border-gray-300 ">
+          <aside className="w-full lg:w-1/3 pl-0 lg:pl-8">
+            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+              <form className="flex items-center">
                 <input
                   type="text"
                   placeholder="Search Posts"
-                  name="search2"
-                  className="w-full p-3 border-none"
+                  className="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white p-3 ml-3"
+                  className="bg-blue-600 text-white p-3 rounded-r-md hover:bg-blue-700 transition-colors duration-200"
+                  aria-label="Search"
                 >
                   <FaSearch />
                 </button>
               </form>
             </div>
-
-            <div className="bg-white p-6 lg:shadow-md mb-8">
+            <div className="bg-white p-6 rounded-lg shadow-md mb-8 text-center">
               <img
-                className="w-24 h-24 rounded-full mb-4"
-                src={userP.userUrl || "https://via.placeholder.com/96"}
-                alt="User"
+                className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                src={userP.userUrl || "/placeholder.svg?height=96&width=96"}
+                alt={userP.userName || "Author"}
               />
-              <h4 className="font-bold text-gray-800 mb-2">
-                <a href="#" className="hover:underline">
-                  {userP.userName || "Author Name"}
-                </a>
-              </h4>
-              
-              <div className="flex space-x-4">
-                <a href="#" className="text-blue-600 hover:underline">
-                  <i className="fa fa-facebook"></i>
-                </a>
-                <a href="#" className="text-blue-400 hover:underline">
-                  <i className="fa fa-twitter"></i>
-                </a>
-                <a href="#" className="text-pink-500 hover:underline">
-                  <i className="fa fa-dribbble"></i>
-                </a>
-                <a href="#" className="text-blue-500 hover:underline">
-                  <i className="fa fa-behance"></i>
-                </a>
+              <h2 className="font-bold text-xl text-gray-800 mb-2">
+                {userP.userName || "Author Name"}
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Author bio goes here. This is a brief description of the author.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <FaFacebook className="text-blue-600 hover:text-blue-700 cursor-pointer" />
+                <FaTwitter className="text-blue-400 hover:text-blue-500 cursor-pointer" />
+                <FaDribbble className="text-pink-500 hover:text-pink-600 cursor-pointer" />
+                <FaBehance className="text-blue-500 hover:text-blue-600 cursor-pointer" />
               </div>
             </div>
-
-            <div className="bg-white p-6 lg:shadow-md mb-8">
-              <h4 className="font-bold text-gray-800 mb-4">Post Categories</h4>
-              <ul>
+            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+              <h3 className="font-bold text-xl text-gray-800 mb-4">Post Categories</h3>
+              <ul className="space-y-2">
                 {blog.categories && blog.categories.length > 0 ? (
                   blog.categories.map((category) => (
-                    <li
-                      key={category._id}
-                      className="flex justify-between mb-2"
-                    >
+                    <li key={category._id} className="flex justify-between items-center">
                       <a href="#" className="text-blue-600 hover:underline">
                         {category.value}
                       </a>
-                      <span className="text-gray-600">37</span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        37
+                      </span>
                     </li>
                   ))
                 ) : (
@@ -298,9 +207,7 @@ const BlogSingle = () => {
                 )}
               </ul>
             </div>
-
-            
-          </div>
+          </aside>
         </div>
       </section>
     </>
