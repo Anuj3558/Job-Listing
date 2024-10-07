@@ -126,18 +126,17 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    // Fetch jobs when the component mounts or when page changes
     axios
       .get(`${process.env.REACT_APP_BACKEND_URL}/get-all-jobs?page=${page}`)
       .then((response) => {
         const fetchedJobs = response?.data?.jobs || [];
         setJobs(fetchedJobs);
-        // Assume totalPages is returned
       })
       .catch((error) => {
         console.error("Error fetching jobs:", error);
       });
   }, [page, setJobs]);
+
   const HandleLog = async () => {
     try {
       await signOut(auth);
@@ -184,7 +183,7 @@ const Navbar = () => {
     "/cities", 
     "/company-details", 
     "/confirm-apply"
-  ].includes(location.pathname) || location.pathname.includes("/resume-check")||location.pathname.includes("/confirm-apply");
+  ].includes(location.pathname) || location.pathname.includes("/resume-check") || location.pathname.includes("/confirm-apply");
 
   return (
     <motion.header
@@ -192,222 +191,193 @@ const Navbar = () => {
       animate={navbarControls}
       initial={{ opacity: 0.8, y: -10 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
-      className={`left-0 poppins-regular w-full text-white z-50 ease-in-out duration-500 transform ${
+      className={`left-0 w-full z-50 ease-in-out duration-500 transform ${
         isScrolled || shouldApplyBackground
-          ? "fixed bg-[#000000CC] text-white shadow-md"
-          : "text-[#230d0d] absolute translate-y"
+          ? "fixed bg-black bg-opacity-80 text-white shadow-md"
+          : "text-gray-900 absolute"
       }`}
     >
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-4">
-          <div id="logo" className="md:ml-60">
-            <Link to="/">
-              <img src={Logo} alt="Logo" title="Home" className="w-auto" />
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0">
+              <img src={Logo} alt="Logo" title="Home" className="h-10 w-auto" />
             </Link>
           </div>
-          <nav id="nav-menu-container" className="hidden md:block">
-            <ul className="flex space-x-6 items-center">
-              <li className="text-inherit font-semibold">
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                <Link
-                  to="/aboutus"
-                  className="hover:text-purple-500 text-inherit"
-                >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/category" className="hover:text-purple-500">
-                  Category
-                </Link>
-              </li>
-              <li>
-                <Link to="/price" className="hover:text-purple-500">
-                  Price
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="hover:text-purple-500">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="hover:text-purple-500">
-                  Contact
-                </Link>
-              </li>
-              {!isLoggedIn || !email ? (
-                <>
-                  <li>
-                    <Link
-                      to="/signup"
-                      className="bg-[#49e4fa] text-white px-4 py-2 hover:bg-[#49e5fa6e] transition duration-300"
-                    >
-                      Signup
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/login"
-                      className="bg-[#49e4fa] text-white px-4 py-2 mr-3 hover:bg-[#49e5fa6e] transition duration-300"
-                    >
-                      Login
-                    </Link>
-                  </li>
-                </>
-              ) : (
-                <li className="relative group">
-                  <button className="w-10 h-10 mr-6 bg-purple-400 rounded-full flex items-center justify-center text-white">
-                    {profileImg ? (
-                      <img
-                        src={profileImg}
-                        alt="Profile"
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <p className="text-white">{name.charAt(0)}</p>
-                    )}
-                  </button>
-                  <ul className="absolute right-0 mt-2 w-48 bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <li>
-                      <button
-                        onClick={handleDashboardClick}
-                        className="block px-4 py-2 text-black hover:bg-gray-100 hover:text-purple-500 w-full text-left"
-                      >
-                        Dashboard
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        onClick={HandleLog}
-                        className="block px-4 py-2 w-full text-black text-left hover:text-purple-500 hover:bg-gray-100"
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
-                </li>
-              )}
-            </ul>
+          <nav className="hidden md:flex space-x-6 items-center">
+            <NavLink to="/">Home</NavLink>
+            <NavLink to="/aboutus">About Us</NavLink>
+            <NavLink to="/category">Category</NavLink>
+            <NavLink to="/price">Price</NavLink>
+            <NavLink to="/blog">Blog</NavLink>
+            <NavLink to="/contact">Contact</NavLink>
+            {!isLoggedIn || !email ? (
+              <>
+                <NavButton to="/signup">Signup</NavButton>
+                <NavButton to="/login">Login</NavButton>
+              </>
+            ) : (
+              <ProfileDropdown
+                profileImg={profileImg}
+                name={name}
+                handleDashboardClick={handleDashboardClick}
+                HandleLog={HandleLog}
+              />
+            )}
           </nav>
           <div className="md:hidden">
-            <button onClick={toggleMobileMenu} className="text-gray-700">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                ></path>
+            <button
+              onClick={toggleMobileMenu}
+              className="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600"
+              aria-label="Toggle menu"
+            >
+              <svg className="h-6 w-6 fill-current" viewBox="0 0 24 24">
+                {isMobileMenuOpen ? (
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z"
+                  />
+                ) : (
+                  <path
+                    fillRule="evenodd"
+                    d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"
+                  />
+                )}
               </svg>
             </button>
           </div>
         </div>
       </div>
-      {isMobileMenuOpen && (
-        <motion.nav
-          id="mobile-menu"
-          className="md:hidden bg-white border-t border-gray-200"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-        >
-          <ul className="flex flex-col space-y-2 p-4 text-purple-500">
-            <li>
-              <Link to="/" className="hover:text-purple-500">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/aboutus" className="hover:text-purple-500">
-                About Us
-              </Link>
-            </li>
-            <li>
-              <Link to="/category" className="hover:text-purple-500">
-                Category
-              </Link>
-            </li>
-            <li>
-              <Link to="/price" className="hover:text-purple-500">
-                Price
-              </Link>
-            </li>
-            <li>
-              <Link to="/blog" className="hover:text-purple-500">
-                Blog
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact" className="hover:text-purple-500">
-                Contact
-              </Link>
-            </li>
-            {!isLoggedIn || !email ? (
-              <>
-                <li>
-                  <Link
-                    to="/signup"
-                    className="bg-[#49e4fa] text-white px-4 py-2 hover:bg-[#49e5fa6e] transition duration-300"
-                  >
-                    Signup
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/login"
-                    className="bg-[#49e4fa] text-white px-4 py-2 mr-3 hover:bg-[#49e5fa6e] transition duration-300"
-                  >
-                    Login
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <li className="relative group">
-                <button className="w-10 h-10 mr-6 bg-purple-400 rounded-full flex items-center justify-center text-white">
-                  {profileImg ? (
-                    <img
-                      src={profileImg}
-                      alt="Profile"
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <p className="text-white">{name.charAt(0)}</p>
-                  )}
-                </button>
-                <ul className="absolute right-0 mt-2 w-48 bg-opacity-30 border border-gray-200 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <li>
-                    <Link
-                      to="/dashboard"
-                      className="block px-4 py-2 text-black hover:bg-gray-100 hover:text-purple-500"
-                    >
-                      Dashboard
-                    </Link>
-                  </li>
-                  <li>
-                    <button
-                      onClick={HandleLog}
-                      className="block px-4 py-2 w-full text-black text-left hover:text-purple-500 hover:bg-gray-100"
-                    >
-                      Logout
-                    </button>
-                  </li>
-                </ul>
-              </li>
-            )}
-          </ul>
-        </motion.nav>
-      )}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        isLoggedIn={isLoggedIn}
+        email={email}
+        profileImg={profileImg}
+        name={name}
+        handleDashboardClick={handleDashboardClick}
+        HandleLog={HandleLog}
+      />
     </motion.header>
   );
 };
+
+const NavLink = ({ to, children }) => (
+  <Link
+    to={to}
+    className="text-sm font-medium hover:text-purple-500 transition duration-150 ease-in-out"
+  >
+    {children}
+  </Link>
+);
+
+const NavButton = ({ to, children }) => (
+  <Link
+    to={to}
+    className="bg-purple-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-600 transition duration-150 ease-in-out"
+  >
+    {children}
+  </Link>
+);
+
+const ProfileDropdown = ({ profileImg, name, handleDashboardClick, HandleLog }) => (
+  <div className="relative group">
+    <button className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-500 text-white focus:outline-none">
+      {profileImg ? (
+        <img src={profileImg} alt="Profile" className="w-full h-full object-cover rounded-full" />
+      ) : (
+        <span className="text-lg font-medium">{name.charAt(0)}</span>
+      )}
+    </button>
+    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out">
+      <button
+        onClick={handleDashboardClick}
+        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500"
+      >
+        Dashboard
+      </button>
+      <button
+        onClick={HandleLog}
+        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+);
+
+const MobileMenu = ({ isOpen, isLoggedIn, email, profileImg, name, handleDashboardClick, HandleLog }) => (
+  <motion.nav
+    className={`md:hidden bg-white shadow-lg ${isOpen ? 'block' : 'hidden'}`}
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -20 }}
+    transition={{ duration: 0.3, ease: "easeInOut" }}
+  >
+    <div className="px-2 pt-2 pb-3 space-y-1">
+      <MobileNavLink to="/">Home</MobileNavLink>
+      <MobileNavLink to="/aboutus">About Us</MobileNavLink>
+      <MobileNavLink to="/category">Category</MobileNavLink>
+      <MobileNavLink to="/price">Price</MobileNavLink>
+      <MobileNavLink to="/blog">Blog</MobileNavLink>
+      <MobileNavLink to="/contact">Contact</MobileNavLink>
+      {!isLoggedIn || !email ? (
+        <>
+          <MobileNavButton to="/signup">Signup</MobileNavButton>
+          <MobileNavButton to="/login">Login</MobileNavButton>
+        </>
+      ) : (
+        <div className="pt-4 pb-3 border-t border-gray-200">
+          <div className="flex items-center px-4">
+            <div className="flex-shrink-0">
+              {profileImg ? (
+                <img className="h-10 w-10 rounded-full" src={profileImg} alt={name} />
+              ) : (
+                <div className="h-10 w-10 rounded-full bg-purple-500 flex items-center justify-center">
+                  <span className="text-white text-lg font-medium">{name.charAt(0)}</span>
+                </div>
+              )}
+            </div>
+            <div className="ml-3">
+              <div className="text-base font-medium text-gray-800">{name}</div>
+              <div className="text-sm font-medium text-gray-500">{email}</div>
+            </div>
+          </div>
+          <div className="mt-3 space-y-1">
+            <button
+              onClick={handleDashboardClick}
+              className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={HandleLog}
+              className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </motion.nav>
+);
+
+const MobileNavLink = ({ to, children }) => (
+  <Link
+    to={to}
+    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+  >
+    {children}
+  </Link>
+);
+
+const MobileNavButton = ({ to, children }) => (
+  <Link
+    to={to}
+    className="block w-full px-3 py-2 rounded-md text-base font-medium text-center text-white bg-purple-500 hover:bg-purple-600"
+  >
+    {children}
+  </Link>
+);
 
 export default Navbar;

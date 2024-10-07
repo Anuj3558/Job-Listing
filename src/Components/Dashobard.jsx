@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+"use client"
+
+import React, { useEffect, useState } from "react"
 import {
   FaUser,
   FaBriefcase,
@@ -7,196 +9,134 @@ import {
   FaBuilding,
   FaListAlt,
   FaPlusCircle,
-} from "react-icons/fa";
-import { useDashboard } from "../context/context.js"; // Import the custom hook
-import JobPortalProfilePage from "./ProfilePage";
-import Analytics from "./Analytics";
-import CompanyProfile from "./CompanyProfile";
-import RecentJobPostings from "./RecentJobPostings";
-import PostJob from "./PostJob";
-import EditJob from "./EditJob.jsx";
-import CodeEditor from "./codingEnv/CodeEditor.jsx";
-import { useProfile } from "../context/ProfileContext.js";
-import BlogUpload from "./BlogUpload.jsx";
+  FaBars,
+} from "react-icons/fa"
+import { useDashboard } from "../context/context.js"
+import { useProfile } from "../context/ProfileContext.js"
+import JobPortalProfilePage from "./ProfilePage"
+import Analytics from "./Analytics"
+import CompanyProfile from "./CompanyProfile"
+import RecentJobPostings from "./RecentJobPostings"
+import PostJob from "./PostJob"
+import EditJob from "./EditJob.jsx"
+import CodeEditor from "./codingEnv/CodeEditor.jsx"
+import BlogUpload from "./BlogUpload.jsx"
 
-const Dashboard = () => {
-  const { activeSection, setActiveSection } = useDashboard(); // Use the context
-  const { userType } = useProfile();
-  const userT = userType || "employee"; // Default to "employee" if userType is undefined
+export default function Dashboard() {
+  const { activeSection, setActiveSection } = useDashboard()
+  const { userType } = useProfile()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const userT = userType || "employee"
 
   useEffect(() => {
     if (!activeSection) {
-      // Set default section based on user type if none is active
-      setActiveSection(userT === "employee" ? "Profile" : "CompanyProfile");
+      setActiveSection(userT === "employee" ? "Profile" : "CompanyProfile")
     }
-  }, [activeSection, userT, setActiveSection]);
+  }, [activeSection, userT, setActiveSection])
 
   const renderSection = () => {
     if (userT === "employee") {
       switch (activeSection) {
         case "Profile":
-          return <JobPortalProfilePage />;
+          return <JobPortalProfilePage />
         case "MyJobs":
-          return <Analytics />;
+          return <Analytics />
         case "Applications":
-          return <CodeEditor />;
+          return <CodeEditor />
         case "Notifications":
-          return <div>Notifications</div>; // Adjust to a real component or remove
+          return <div>Notifications</div>
         case "BlogUpload":
-          return <BlogUpload />;
+          return <BlogUpload />
         default:
-          return <JobPortalProfilePage />;
+          return <JobPortalProfilePage />
       }
     } else if (userT === "company") {
       switch (activeSection) {
         case "CompanyProfile":
-          return <CompanyProfile />;
+          return <CompanyProfile />
         case "RecentJobPostings":
-          return <RecentJobPostings Title={"Recent Job Posting"} type={"Close the postion"} />;
+          return <RecentJobPostings Title="Recent Job Posting" type="Close the postion" />
         case "PostJob":
-          return <PostJob />;
+          return <PostJob />
         case "EditJob":
-          return <EditJob />;
+          return <EditJob />
         case "Applications":
-            return <CodeEditor />;
+          return <CodeEditor />
         case "Draft":
-          return <RecentJobPostings Title={"Jobs in Draft"} type={"Post Job"}/> ; // Placeholder, replace with actual component if needed
+          return <RecentJobPostings Title="Jobs in Draft" type="Post Job" />
         default:
-          return <CompanyProfile />;
+          return <CompanyProfile />
       }
     }
-  };
+  }
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  const SidebarContent = () => (
+    <ul className="space-y-2">
+      {userT === "employee" ? (
+        <>
+          <SidebarItem icon={FaUser} label="Profile" section="Profile" />
+          <SidebarItem icon={FaBriefcase} label="My Jobs" section="MyJobs" />
+          <SidebarItem icon={FaClipboardList} label="Applications" section="Applications" />
+          <SidebarItem icon={FaBell} label="Notifications" section="Notifications" />
+          <SidebarItem icon={FaPlusCircle} label="Blog Upload" section="BlogUpload" />
+        </>
+      ) : (
+        <>
+          <SidebarItem icon={FaBuilding} label="Company Profile" section="CompanyProfile" />
+          <SidebarItem icon={FaListAlt} label="Recent Job Postings" section="RecentJobPostings" />
+          <SidebarItem icon={FaPlusCircle} label="Post a Job" section="PostJob" />
+          <SidebarItem icon={FaClipboardList} label="Applications" section="Applications" />
+          <SidebarItem icon={FaListAlt} label="Jobs in Draft" section="Draft" />
+        </>
+      )}
+    </ul>
+  )
+
+  const SidebarItem = ({ icon: Icon, label, section }) => (
+    <li
+      className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer rounded-lg transition-colors duration-200 ${
+        activeSection === section ? "bg-blue-100" : ""
+      }`}
+      onClick={() => {
+        setActiveSection(section)
+        setIsSidebarOpen(false)
+      }}
+      aria-current={activeSection === section ? "page" : undefined}
+    >
+      <Icon className="mr-2" />
+      <span>{label}</span>
+    </li>
+  )
 
   return (
-    <div className="min-h-screen bg-gray-100 flex pt-16">
+    <div className="min-h-screen bg-gray-100 pt-20 flex flex-col md:flex-row">
+      {/* Mobile Sidebar Toggle */}
+      <div className="md:hidden bg-white p-4 shadow-md">
+        <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-700">
+          <FaBars size={24} />
+        </button>
+      </div>
+
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md">
+      <div
+        className={`${
+          isSidebarOpen ? "block" : "hidden"
+        } md:block w-full md:w-64 bg-white shadow-md transition-all duration-300 ease-in-out overflow-y-auto`}
+      >
         <div className="p-4">
           <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
         </div>
-        <ul>
-          {userT === "employee" ? (
-            <>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "Profile" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("Profile")}
-                aria-current={activeSection === "Profile" ? "page" : undefined}
-              >
-                <FaUser className="mr-2" />
-                <span>Profile</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "MyJobs" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("MyJobs")}
-                aria-current={activeSection === "MyJobs" ? "page" : undefined}
-              >
-                <FaBriefcase className="mr-2" />
-                <span>My Jobs</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "Applications" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("Applications")}
-                aria-current={activeSection === "Applications" ? "page" : undefined}
-              >
-                <FaClipboardList className="mr-2" />
-                <span>Applications</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "Notifications" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("Notifications")}
-                aria-current={activeSection === "Notifications" ? "page" : undefined}
-              >
-                <FaBell className="mr-2" />
-                <span>Notifications</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "BlogUpload" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("BlogUpload")}
-                aria-current={activeSection === "BlogUpload" ? "page" : undefined}
-              >
-                <FaPlusCircle className="mr-2" />
-                <span>BlogUpload</span>
-              </li>
-            </>
-          ) : (
-            <>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "CompanyProfile" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("CompanyProfile")}
-                aria-current={activeSection === "CompanyProfile" ? "page" : undefined}
-              >
-                <FaBuilding className="mr-2" />
-                <span>Company Profile</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "RecentJobPostings" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("RecentJobPostings")}
-                aria-current={activeSection === "RecentJobPostings" ? "page" : undefined}
-              >
-                <FaListAlt className="mr-2" />
-                <span>Recent Job Postings</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "PostJob" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("PostJob")}
-                aria-current={activeSection === "PostJob" ? "page" : undefined}
-              >
-                <FaPlusCircle className="mr-2" />
-                <span>Post a Job</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "Applications" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("Applications")}
-                aria-current={activeSection === "Applications" ? "page" : undefined}
-              >
-                <FaClipboardList className="mr-2" />
-                <span>Applications</span>
-              </li>
-              <li
-                className={`p-4 hover:bg-blue-100 flex items-center cursor-pointer ${
-                  activeSection === "Draft" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => setActiveSection("Draft")}
-                aria-current={activeSection === "Draft" ? "page" : undefined}
-              >
-                <FaListAlt className="mr-2" />
-                <span>Jobs in Draft</span>
-              </li>
-            </>
-          )}
-        </ul>
+        <SidebarContent />
       </div>
 
       {/* Main Content */}
-      <div
-        className="flex-1 p-6 overflow-y-scroll"
-        style={{
-          scrollbarWidth: "none" /* Firefox */,
-          msOverflowStyle: "none" /* IE and Edge */,
-        }}
-      >
-        {renderSection()}
+      <div className="flex-1 p-6 overflow-y-auto">
+        <div className="max-w-4xl mx-auto">{renderSection()}</div>
       </div>
     </div>
-  );
-};
-
-export default Dashboard;
+  )
+}

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaEdit, FaSave } from "react-icons/fa";
 import { useProfile } from "../context/ProfileContext";
 import axios from "axios";
 import { handleSuccess } from "./Home/utils/utils";
 import { ToastContainer } from "react-toastify";
+import { motion } from "framer-motion";
 
 const JobPortalProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -16,7 +17,7 @@ const JobPortalProfilePage = () => {
     education: [{ course: "", institute: "", yearOfCompletion: "" }],
     certifications: [],
     skills: [],
-    resume: "", // State for resume
+    resume: "",
   });
 
   const {
@@ -46,25 +47,18 @@ const JobPortalProfilePage = () => {
     certifications,
   } = useProfile();
 
-  // console.log("Profile Changes ->");
-  // console.log("skills", skills);
-  // console.log("phone", phone);
-  // console.log("education", education);
-  // console.log("certifications", certifications);
-  // console.log("name", name);
-
   useEffect(() => {
     setProfile({
-      name: name,
+      name,
       title: "",
       location: selectedCity,
-      email: email,
-      phone: phone,
+      email,
+      phone,
       experience: experiences,
-      education: education,
-      certifications: certifications,
-      skills: skills,
-      resume: resume,
+      education,
+      certifications,
+      skills,
+      resume,
     });
   }, [
     name,
@@ -78,123 +72,37 @@ const JobPortalProfilePage = () => {
     certifications,
   ]);
 
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [isEditingExperience, setIsEditingExperience] = useState(false);
-  const [isEditingEducation, setIsEditingEducation] = useState(false);
-  const [isEditingCertifications, setIsEditingCertifications] = useState(false);
-  const [isEditingSkills, setIsEditingSkills] = useState(false);
-  const [isEditingResume, setIsEditingResume] = useState(false); // State for editing resume
-  const [isEditingAnySection, setIsEditingAnySection] = useState(false);
-
-  const [newEducation, setNewEducation] = useState({
-    course: "",
-    institute: "",
-    yearOfCompletion: "",
-  });
+  const [editingSection, setEditingSection] = useState("");
+  const [newEducation, setNewEducation] = useState({ course: "", institute: "", yearOfCompletion: "" });
   const [newCertification, setNewCertification] = useState("");
-  const [newExperience, setNewExperience] = useState({
-    company: "",
-    role: "",
-    duration: "",
-  });
+  const [newExperience, setNewExperience] = useState({ company: "", role: "", duration: "" });
   const [newSkill, setNewSkill] = useState("");
 
   const handleChange = (field, value) => {
     setProfile((prevProfile) => ({ ...prevProfile, [field]: value }));
   };
 
-  const addEducation = () => {
-    if (
-      newEducation.course.trim() &&
-      newEducation.institute.trim() &&
-      newEducation.yearOfCompletion
-    ) {
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        education: [...prevProfile.education, newEducation],
-      }));
-      setNewEducation({ course: "", institute: "", yearOfCompletion: "" });
+  const addItem = (section, newItem, setNewItem) => {
+    if (Object.values(newItem).every(val => val.trim())) {
+      setProfile(prev => ({ ...prev, [section]: [...prev[section], newItem] }));
+      setNewItem(typeof newItem === 'string' ? '' : {});
     }
   };
 
-  const addCertification = () => {
-    if (newCertification.trim()) {
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        certifications: [...prevProfile.certifications, newCertification],
-      }));
-      setNewCertification("");
-    }
-  };
-
-  const addExperience = () => {
-    if (
-      newExperience.company.trim() &&
-      newExperience.role.trim() &&
-      newExperience.duration.trim()
-    ) {
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        experience: [...prevProfile.experience, newExperience],
-      }));
-      setNewExperience({ company: "", role: "", duration: "" });
-    }
-  };
-
-  const addSkill = () => {
-    if (newSkill.trim()) {
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        skills: [...prevProfile.skills, newSkill],
-      }));
-      setNewSkill("");
-    }
-  };
-
-  const removeExperience = (index) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      experience: prevProfile.experience.filter((_, i) => i !== index),
-    }));
-  };
-
-  const removeEducation = (index) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      education: prevProfile.education.filter((_, i) => i !== index),
-    }));
-  };
-
-  const removeCertification = (index) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      certifications: prevProfile.certifications.filter((_, i) => i !== index),
-    }));
-  };
-
-  const removeSkill = (index) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      skills: prevProfile.skills.filter((_, i) => i !== index),
+  const removeItem = (section, index) => {
+    setProfile(prev => ({
+      ...prev,
+      [section]: prev[section].filter((_, i) => i !== index),
     }));
   };
 
   const saveChanges = async () => {
     try {
-      const url = `${process.env.REACT_APP_BACKEND_URL}/savechanges`;;
+      const url = `${process.env.REACT_APP_BACKEND_URL}/savechanges`;
       const response = await axios.post(url, profile);
 
       if (response.status === 200) {
-        setIsEditingAnySection(false);
-        console.log("Changes saved:", profile);
-        
-        // Reset edit states after saving
-        setIsEditingProfile(false);
-        setIsEditingExperience(false);
-        setIsEditingEducation(false);
-        setIsEditingCertifications(false);
-        setIsEditingSkills(false);
-        setIsEditingResume(false);
+        setEditingSection("");
         handleSuccess("Profile updated successfully");
       } else {
         console.error("Failed to save changes, status code:", response.status);
@@ -204,368 +112,205 @@ const JobPortalProfilePage = () => {
     }
   };
 
-  return (
-    <section className="bg-gray-100">
-      <div className="container mx-auto">
-        <div className="flex flex-col lg:flex-row">
-          {/* Profile Summary Section */}
-          <div className="lg:w-1/3 mb-4">
-            <div className="card bg-white p-6 text-center shadow-md mb-4 relative">
-              {profileImg ? (
-                <img
-                  src={profileImg}
-                  alt="Profile"
-                  className="rounded-full mx-auto"
-                />
-              ) : (
-                <button className="w-36 h-36 text-7xl mr-6 bg-purple-400 rounded-full">
-                  <p className="text-white">{name}</p>
-                </button>
-              )}
+  const SectionCard = ({ title, children, onEdit }) => (
+    <motion.div
+      className="bg-white rounded-lg shadow-md p-6 mb-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+        <button
+          onClick={onEdit}
+          className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
+          aria-label={`Edit ${title}`}
+        >
+          {editingSection === title ? <FaSave /> : <FaEdit />}
+        </button>
+      </div>
+      {children}
+    </motion.div>
+  );
 
-              {isEditingProfile ? (
-                <>
-                  <input
-                    type="text"
-                    value={profile.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
-                    className="my-3 text-lg font-medium text-center w-full border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={profile.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    className="text-gray-500 mb-1 text-center w-full border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={profile.location}
-                    onChange={(e) => handleChange("location", e.target.value)}
-                    className="text-gray-500 mb-4 text-center w-full border-b-2 border-gray-300 focus:outline-none"
-                  />
-                </>
-              ) : (
-                <>
-                  <h5 className="my-3 text-lg font-medium">{profile.name}</h5>
-                  <p className="text-gray-500 mb-1">{profile.title}</p>
-                  <p className="text-gray-500 mb-4">{profile.location}</p>
-                </>
-              )}
-              <button
-                onClick={() => {
-                  setIsEditingAnySection(true);
-                  setIsEditingProfile(!isEditingProfile);
-                }}
-                className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
-              >
-                {isEditingProfile ? "Save" : "Edit"}
-              </button>
-            </div>
-            <div className="card bg-white p-6 shadow-md mb-4">
-              <h3 className="font-bold text-gray-700 mb-4">
-                Services Offered by Us
-              </h3>
-              <ul className="list-disc list-inside text-gray-500">
+  const InputField = ({ label, value, onChange, placeholder }) => (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <input
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  );
+
+  return (
+    <section className="bg-gray-100 min-h-screen py-12">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row lg:space-x-8">
+          <div className="lg:w-1/3 mb-8 lg:mb-0">
+            <SectionCard title="Profile Summary" onEdit={() => setEditingSection(editingSection === "Profile Summary" ? "" : "Profile Summary")}>
+              <div className="text-center">
+                {profileImg ? (
+                  <img src={profileImg} alt="Profile" className="w-32 h-32 rounded-full mx-auto mb-4" />
+                ) : (
+                  <div className="w-32 h-32 bg-purple-400 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-4xl font-bold">
+                    {name.charAt(0)}
+                  </div>
+                )}
+                {editingSection === "Profile Summary" ? (
+                  <>
+                    <InputField label="Name" value={profile.name} onChange={(e) => handleChange("name", e.target.value)} placeholder="Your Name" />
+                    <InputField label="Title" value={profile.title} onChange={(e) => handleChange("title", e.target.value)} placeholder="Your Title" />
+                    <InputField label="Location" value={profile.location} onChange={(e) => handleChange("location", e.target.value)} placeholder="Your Location" />
+                  </>
+                ) : (
+                  <>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">{profile.name}</h2>
+                    <p className="text-gray-600 mb-1">{profile.title}</p>
+                    <p className="text-gray-500">{profile.location}</p>
+                  </>
+                )}
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Services Offered" onEdit={() => {}}>
+              <ul className="list-disc list-inside text-gray-600">
                 <li>Job and Internship Opportunities</li>
                 <li>Resume Tester</li>
                 <li>Coding Environment</li>
               </ul>
-            </div>
+            </SectionCard>
           </div>
 
-          {/* Profile Details Section */}
-          <div className="lg:w-2/3 ml-6">
-            <div className="card bg-white p-6 shadow-md mb-4">
-              {[
-                { label: "Full Name", field: "name", value: profile.name },
-                { label: "Email", field: "email", value: profile.email },
-                { label: "Phone", field: "phone", value: profile.phone },
-                {
-                  label: "Location",
-                  field: "location",
-                  value: profile.location,
-                },
-              ].map((item, index) => (
-                <React.Fragment key={index}>
-                  <div className="flex justify-between py-2">
-                    <p className="mb-0 text-gray-700">{item.label}</p>
-                    {isEditingProfile ? (
-                      <input
-                        type="text"
-                        value={item.value}
-                        onChange={(e) =>
-                          handleChange(item.field, e.target.value)
-                        }
-                        className="text-gray-500 mb-0 w-1/2 border-b-2 border-gray-300 focus:outline-none"
-                      />
-                    ) : (
-                      <p className="text-gray-500 mb-0">{item.value}</p>
+          <div className="lg:w-2/3">
+            <SectionCard title="Personal Information" onEdit={() => setEditingSection(editingSection === "Personal Information" ? "" : "Personal Information")}>
+              {editingSection === "Personal Information" ? (
+                <>
+                  <InputField label="Full Name" value={profile.name} onChange={(e) => handleChange("name", e.target.value)} placeholder="Your Full Name" />
+                  <InputField label="Email" value={profile.email} onChange={(e) => handleChange("email", e.target.value)} placeholder="Your Email" />
+                  <InputField label="Phone" value={profile.phone} onChange={(e) => handleChange("phone", e.target.value)} placeholder="Your Phone Number" />
+                  <InputField label="Location" value={profile.location} onChange={(e) => handleChange("location", e.target.value)} placeholder="Your Location" />
+                </>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><span className="font-medium">Full Name:</span> {profile.name}</div>
+                  <div><span className="font-medium">Email:</span> {profile.email}</div>
+                  <div><span className="font-medium">Phone:</span> {profile.phone}</div>
+                  <div><span className="font-medium">Location:</span> {profile.location}</div>
+                </div>
+              )}
+            </SectionCard>
+
+            <SectionCard title="Experience" onEdit={() => setEditingSection(editingSection === "Experience" ? "" : "Experience")}>
+              {profile.experience.map((exp, index) => (
+                <div key={index} className="mb-4 pb-4 border-b last:border-b-0">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-bold text-gray-800">{exp.company}</h4>
+                      <p className="text-gray-600">{exp.role}</p>
+                      <p className="text-gray-500">{exp.duration}</p>
+                    </div>
+                    {editingSection === "Experience" && (
+                      <button onClick={() => removeItem("experience", index)} className="text-red-500 hover:text-red-600" aria-label="Remove experience">
+                        <FaTimes />
+                      </button>
                     )}
                   </div>
-                </React.Fragment>
-              ))}
-            </div>
-
-            {/* Experience Section */}
-            <div className="card bg-white p-6 shadow-md mb-4 relative">
-              <h3 className="font-bold text-gray-700 mb-4">Experience</h3>
-              {profile.experience.map((exp, index) => (
-                <div
-                  key={index}
-                  className="border-b py-2 flex justify-between items-center relative"
-                >
-                  <div>
-                    <p className="font-bold">{exp.company}</p>
-                    <p className="text-gray-500">{exp.role}</p>
-                    <p className="text-gray-400">{exp.duration}</p>
-                  </div>
-                  {isEditingExperience && (
-                    <button
-                      onClick={() => removeExperience(index)}
-                      className="absolute top-2 right-2 text-red-500"
-                    >
-                      <FaTimes />
-                    </button>
-                  )}
                 </div>
               ))}
-              {isEditingExperience && (
+              {editingSection === "Experience" && (
                 <div className="mt-4">
-                  <input
-                    type="text"
-                    placeholder="Company"
-                    value={newExperience.company}
-                    onChange={(e) =>
-                      setNewExperience({
-                        ...newExperience,
-                        company: e.target.value,
-                      })
-                    }
-                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Role"
-                    value={newExperience.role}
-                    onChange={(e) =>
-                      setNewExperience({
-                        ...newExperience,
-                        role: e.target.value,
-                      })
-                    }
-                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Duration"
-                    value={newExperience.duration}
-                    onChange={(e) =>
-                      setNewExperience({
-                        ...newExperience,
-                        duration: e.target.value,
-                      })
-                    }
-                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <button
-                    onClick={addExperience}
-                    className="bg-blue-500 text-white py-2 px-4 rounded"
-                  >
+                  <InputField label="Company" value={newExperience.company} onChange={(e) => setNewExperience({...newExperience, company: e.target.value})} placeholder="Company Name" />
+                  <InputField label="Role" value={newExperience.role} onChange={(e) => setNewExperience({...newExperience, role: e.target.value})} placeholder="Your Role" />
+                  <InputField label="Duration" value={newExperience.duration} onChange={(e) => setNewExperience({...newExperience, duration: e.target.value})} placeholder="Duration" />
+                  <button onClick={() => addItem("experience", newExperience, setNewExperience)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200">
                     Add Experience
                   </button>
                 </div>
               )}
-              <button
-                onClick={() => {
-                  setIsEditingAnySection(true);
-                  setIsEditingExperience(!isEditingExperience);
-                }}
-                className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
-              >
-                {isEditingExperience ? "Save" : "Edit"}
-              </button>
-            </div>
+            </SectionCard>
 
-            {/* Education Section */}
-            <div className="card bg-white p-6 shadow-md mb-4 relative">
-              <h3 className="font-bold text-gray-700 mb-4">Education</h3>
+            <SectionCard title="Education" onEdit={() => setEditingSection(editingSection === "Education" ? "" : "Education")}>
               {profile.education.map((edu, index) => (
-                <div
-                  key={index}
-                  className="border-b py-2 flex justify-between items-center relative"
-                >
-                  <div>
-                    <p className="font-bold">{edu.course}</p>
-                    <p className="text-gray-500">{edu.institute}</p>
-                    <p className="text-gray-400">{edu.yearOfCompletion}</p>
+                <div key={index} className="mb-4 pb-4 border-b last:border-b-0">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-bold text-gray-800">{edu.course}</h4>
+                      <p className="text-gray-600">{edu.institute}</p>
+                      <p className="text-gray-500">{edu.yearOfCompletion}</p>
+                    </div>
+                    {editingSection === "Education" && (
+                      <button onClick={() => removeItem("education", index)} className="text-red-500 hover:text-red-600" aria-label="Remove education">
+                        <FaTimes />
+                      </button>
+                    )}
                   </div>
-                  {isEditingEducation && (
-                    <button
-                      onClick={() => removeEducation(index)}
-                      className="absolute top-2 right-2 text-red-500"
-                    >
-                      <FaTimes />
-                    </button>
-                  )}
                 </div>
               ))}
-              {isEditingEducation && (
+              {editingSection === "Education" && (
                 <div className="mt-4">
-                  <input
-                    type="text"
-                    placeholder="Course"
-                    value={newEducation.course}
-                    onChange={(e) =>
-                      setNewEducation({
-                        ...newEducation,
-                        course: e.target.value,
-                      })
-                    }
-                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Institute"
-                    value={newEducation.institute}
-                    onChange={(e) =>
-                      setNewEducation({
-                        ...newEducation,
-                        institute: e.target.value,
-                      })
-                    }
-                    className="w-full mb-2 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Year of Completion"
-                    value={newEducation.yearOfCompletion}
-                    onChange={(e) =>
-                      setNewEducation({
-                        ...newEducation,
-                        yearOfCompletion: e.target.value,
-                      })
-                    }
-                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <button
-                    onClick={addEducation}
-                    className="bg-blue-500 text-white py-2 px-4 rounded"
-                  >
+                  <InputField label="Course" value={newEducation.course} onChange={(e) => setNewEducation({...newEducation, course: e.target.value})} placeholder="Course Name" />
+                  <InputField label="Institute" value={newEducation.institute} onChange={(e) => setNewEducation({...newEducation, institute: e.target.value})} placeholder="Institute Name" />
+                  <InputField label="Year of Completion" value={newEducation.yearOfCompletion} onChange={(e) => setNewEducation({...newEducation, yearOfCompletion: e.target.value})} placeholder="Year of Completion" />
+                  <button onClick={() => addItem("education", newEducation, setNewEducation)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200">
                     Add Education
                   </button>
                 </div>
               )}
-              <button
-                onClick={() => {
-                  setIsEditingAnySection(true);
-                  setIsEditingEducation(!isEditingEducation);
-                }}
-                className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
-              >
-                {isEditingEducation ? "Save" : "Edit"}
-              </button>
-            </div>
+            </SectionCard>
 
-            {/* Certifications Section */}
-            <div className="card bg-white p-6 shadow-md mb-4 relative">
-              <h3 className="font-bold text-gray-700 mb-4">Certifications</h3>
-              {profile.certifications.map((cert, index) => (
-                <div
-                  key={index}
-                  className="border-b py-2 flex justify-between items-center relative"
-                >
-                  <p className="text-gray-500">{cert}</p>
-                  {isEditingCertifications && (
-                    <button
-                      onClick={() => removeCertification(index)}
-                      className="absolute top-2 right-2 text-red-500"
-                    >
-                      <FaTimes />
-                    </button>
-                  )}
-                </div>
-              ))}
-              {isEditingCertifications && (
+            <SectionCard title="Certifications" onEdit={() => setEditingSection(editingSection === "Certifications" ? "" : "Certifications")}>
+              <div className="flex flex-wrap gap-2">
+                {profile.certifications.map((cert, index) => (
+                  <div key={index} className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 flex items-center">
+                    {cert}
+                    {editingSection === "Certifications" && (
+                      <button onClick={() => removeItem("certifications", index)} className="ml-2 text-red-500 hover:text-red-600" aria-label="Remove certification">
+                        <FaTimes />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {editingSection === "Certifications" && (
                 <div className="mt-4">
-                  <input
-                    type="text"
-                    placeholder="Certification"
-                    value={newCertification}
-                    onChange={(e) => setNewCertification(e.target.value)}
-                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <button
-                    onClick={addCertification}
-                    className="bg-blue-500 text-white py-2 px-4 rounded"
-                  >
+                  <InputField label="Certification" value={newCertification} onChange={(e) => setNewCertification(e.target.value)} placeholder="Certification Name" />
+                  <button onClick={() => addItem("certifications", newCertification, setNewCertification)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200">
                     Add Certification
                   </button>
                 </div>
               )}
-              <button
-                onClick={() => {
-                  setIsEditingAnySection(true);
-                  setIsEditingCertifications(!isEditingCertifications);
-                }}
-                className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
-              >
-                {isEditingCertifications ? "Save" : "Edit"}
-              </button>
-            </div>
+            </SectionCard>
 
-            {/* Skills Section */}
-            <div className="card bg-white p-6 shadow-md mb-4 relative">
-              <h3 className="font-bold text-gray-700 mb-4">Skills</h3>
-              {profile.skills.map((skill, index) => (
-                <div
-                  key={index}
-                  className="border-b py-2 flex justify-between items-center relative"
-                >
-                  <p className="text-gray-500">{skill}</p>
-                  {isEditingSkills && (
-                    <button
-                      onClick={() => removeSkill(index)}
-                      className="absolute top-2 right-2 text-red-500"
-                    >
-                      <FaTimes />
-                    </button>
-                  )}
-                </div>
-              ))}
-              {isEditingSkills && (
+            <SectionCard title="Skills" onEdit={() => setEditingSection(editingSection === "Skills" ? "" : "Skills")}>
+              <div className="flex flex-wrap gap-2">
+                {profile.skills.map((skill, index) => (
+                  <div key={index} className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 flex items-center">
+                    {skill}
+                    {editingSection === "Skills" && (
+                      <button onClick={() => removeItem("skills", index)} className="ml-2 text-red-500 hover:text-red-600" aria-label="Remove skill">
+                        <FaTimes />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {editingSection === "Skills" && (
                 <div className="mt-4">
-                  <input
-                    type="text"
-                    placeholder="Skill"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    className="w-full mb-4 border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <button
-                    onClick={addSkill}
-                    className="bg-blue-500 text-white py-2 px-4 rounded"
-                  >
+                  <InputField label="Skill" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} placeholder="Skill Name" />
+                  <button onClick={() => addItem("skills", newSkill, setNewSkill)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-200">
                     Add Skill
                   </button>
                 </div>
               )}
-              <button
-                onClick={() => {
-                  setIsEditingAnySection(true);
-                  setIsEditingSkills(!isEditingSkills);
-                }}
-                className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
-              >
-                {isEditingSkills ? "Save" : "Edit"}
-              </button>
-            </div>
+            </SectionCard>
 
-            {/* Resume Section */}
-            <div className="card bg-white p-6 shadow-md mb-4 relative">
-              <h3 className="font-bold text-gray-700 mb-4">Resume</h3>
-              <p className="text-gray-500 mb-4">{profile.resume}</p>
-              {isEditingResume && (
-                <div className="mt-4">
+            <SectionCard title="Resume" onEdit={() => setEditingSection(editingSection === "Resume" ? "" : "Resume")}>
+              {editingSection === "Resume" ? (
+                <div>
                   <input
                     type="file"
                     onChange={(e) => {
@@ -583,30 +328,20 @@ const JobPortalProfilePage = () => {
                     }}
                     className="mb-4"
                   />
-                  <button
-                    onClick={() => setIsEditingResume(false)}
-                    className="bg-blue-500 text-white py-2 px-4 rounded"
-                  >
-                    Save
-                  </button>
                 </div>
+              ) : (
+                <p className="text-gray-600">{profile.resume ? "Resume uploaded" : "No resume uploaded"}</p>
               )}
-              <button
-                onClick={() => setIsEditingResume(!isEditingResume)}
-                className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white py-1 px-2 rounded"
-              >
-                {isEditingResume ? "Save" : "Edit"}
-              </button>
-            </div>
+            </SectionCard>
           </div>
         </div>
-        {isEditingAnySection && (
-          <div className="fixed bottom-0 left-0 mb-20 ml-20 shadow-lg">
+        {editingSection && (
+          <div className="fixed bottom-8 right-8">
             <button
               onClick={saveChanges}
-              className="bg-green-500 text-white py-2 px-4 rounded"
+              className="bg-green-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-green-600 transition-colors duration-200 flex items-center"
             >
-              Save Changes
+              <FaSave className="mr-2" /> Save All Changes
             </button>
           </div>
         )}
