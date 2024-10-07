@@ -1,22 +1,24 @@
 import React from "react";
-import Hero from "./Home/heroSection";
-import FeatureCategories from "./Home/FeatureCategories";
-import FindJobs from "./Home/FindJobs";
-import CallToAction from "./Home/CallToAction";
-import PopularJobCarousel from "./Home/popularJobs";
-import Testimonials from "./Home/testimonial";
-import AnimatedCounter from "./Ui/AnimateCounter";
+import Hero from "./Home/heroSection.jsx";
+import PopularJobs from "./Home/popularJobs.jsx";
+import FeatureCategories from "./Home/FeatureCategories.jsx";
+import FindJobs from "./Home/FindJobs.jsx";
+import CallToAction from "./Home/CallToAction.jsx";
+import Testimonials from "./Home/testimonial.jsx";
+// import AnimatedCounter from "./Ui/AnimatedCounter";
 
-const Home =( )=>{
-    return(<>
+const Home = () => {
+  return (
+    <div className="bg-gray-50 min-h-screen">
       <Hero />
-      <PopularJobCarousel />
+      <PopularJobs />
       <FeatureCategories />
       <FindJobs />
-      <AnimatedCounter />
+      {/* <AnimatedCounter /> */}
       <CallToAction />
       <Testimonials />
-      </>
-    );
-}
+    </div>
+  );
+};
+
 export default Home;

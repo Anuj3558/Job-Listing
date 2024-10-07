@@ -4,8 +4,11 @@ import { useProfile } from "../context/ProfileContext";
 import axios from "axios";
 import { handleSuccess } from "./Home/utils/utils";
 import { ToastContainer } from "react-toastify";
+import { useJobContext } from "../context/JobContext";
+import { Link } from "react-router-dom";
 
 const JobPortalProfilePage = () => {
+    const { jobs } = useJobContext();
   const [profile, setProfile] = useState({
     name: "",
     title: "",
@@ -270,6 +273,28 @@ const JobPortalProfilePage = () => {
                 <li>Resume Tester</li>
                 <li>Coding Environment</li>
               </ul>
+            </div>
+            <div className="pt-10">
+              <h3 className="text-xl font-semibold mb-4">Recommended Jobs</h3>
+              <div className="h-96 overflow-y-scroll scrollbar-hide">
+                {jobs && jobs.length > 0 ? (
+                  jobs.map((job) => (
+                    <div key={job.id} className="bg-white p-4 shadow mb-4">
+                      <h4 className="text-lg font-semibold">{job.title}</h4>
+                      <p className="text-sm text-gray-600">
+                        {job.company} - {job.location}
+                      </p>
+                      <Link to={`/job-detail/${job._id}`}>
+                        <button className="mt-2 bg-blue-600 text-white px-4 py-2">
+                          Apply Now
+                        </button>
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <p>No recommended jobs available.</p>
+                )}
+              </div>
             </div>
           </div>
 

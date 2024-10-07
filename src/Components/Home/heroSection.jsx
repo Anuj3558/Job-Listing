@@ -1,130 +1,144 @@
-import React from 'react';
-import { FaSearch } from 'react-icons/fa'; // Import the search icon from react-icons
-import { HeroImg } from '../../assets';
-import { motion, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import CallToAction from './CallToAction';
+import React from "react";
+import {
+  Search,
+  MapPin,
+  Briefcase,
+  Globe2,
+  Layers,
+  Timer,
+  Sparkles,
+} from "lucide-react";
 
-const Hero = () => {
-  const { ref: heroRef, inView: heroInView } = useInView({ triggerOnce: true });
-  const { ref: featureRef, inView: featureInView } = useInView({ triggerOnce: true });
-  const heroControls = useAnimation();
-  const featureControls = useAnimation();
+const jobTypes = [
+  { icon: Globe2, label: "Remote" },
+  { icon: Timer, label: "Flexible" },
+  { icon: Briefcase, label: "Full-time" },
+  { icon: Layers, label: "Contract" },
+];
 
-  React.useEffect(() => {
-    if (heroInView) {
-      heroControls.start({ opacity: 1, y: 0 });
-    } else {
-      heroControls.start({ opacity: 0, y: -50 });
-    }
-  }, [heroInView, heroControls]);
+const categories = [
+  "AI & Machine Learning",
+  "Blockchain",
+  "Quantum Computing",
+  "Robotics",
+  "Virtual Reality",
+];
 
-  React.useEffect(() => {
-    if (featureInView) {
-      featureControls.start({ opacity: 1, y: 0 });
-    } else {
-      featureControls.start({ opacity: 0, y: 50 });
-    }
-  }, [featureInView, featureControls]);
+const locations = [
+  "Meta Offices",
+  "Space Stations",
+  "Virtual Hubs",
+  "Tech Corridors",
+  "Global Remote",
+];
 
+export default function FuturisticHero() {
   return (
-    <section
-      className="relative bg-cover bg-center h-screen"
-      id="home"
-      style={{ backgroundImage: `url(${HeroImg})` }}
-    >
-      <div className="absolute inset-0 bg-purple-600 opacity-50"></div>
-      <motion.div
-        ref={heroRef}
-        animate={heroControls}
-        initial={{ opacity: 0, y: -50 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
-        className="h-full mx-auto flex flex-col items-center justify-center relative z-10 px-4"
-      >
-        <div className="text-center text-white px-4">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            <span className="text-[#49e4fa]">1500+</span> Jobs posted last week
+    <section className="bg-gradient-to-br from-slate-50 via-blue-50 to-violet-50 py-16 lg:py-24">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="text-center mb-12 space-y-4">
+          <div className="inline-flex items-center justify-center space-x-2 mb-4">
+            <Sparkles className="h-8 w-8 text-violet-500" />
+            <span className="text-sm font-medium bg-violet-100 text-violet-700 px-3 py-1 rounded-full">
+              AI-Powered Matching
+            </span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-800 tracking-tight lg:leading-tight">
+            Your Next-Gen
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">
+              {" "}
+              Career{" "}
+            </span>
+            Awaits
           </h1>
-          <form action="search.html" className="md:w-[120vw] justify-center align-middle p-3 max-w-4xl mx-auto mt-8">
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
-              <div className="w-full sm:w-2/3 lg:w-1/2 px-2 mb-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    className="form-input w-full py-3 px-4 bg-white text-gray-800 shadow-lg pr-12 shadow-lg"
-                    placeholder="What are you looking for?"
-                  />
-                  <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-600">
-                    <FaSearch />
-                  </span>
-                </div>
-              </div>
-              <div className="w-full sm:w-1/3 lg:w-1/4 px-2 mb-4">
-                <select className="form-select w-full py-3 px-4 bg-white text-gray-800 shadow-lg shadow-lg">
-                  <option>Select area</option>
-                  <option>Dhaka</option>
-                  <option>Rajshahi</option>
-                  <option>Barishal</option>
-                  <option>Noakhali</option>
-                </select>
-              </div>
-              <div className="w-full sm:w-1/3 lg:w-1/4 px-2 mb-4">
-                <select className="form-select w-full py-3 px-4 bg-white text-gray-800 shadow-lg shadow-lg">
-                  <option>Categories</option>
-                  <option>Medical</option>
-                  <option>Technology</option>
-                  <option>Government</option>
-                  <option>Development</option>
-                </select>
-              </div>
-              <div className="w-full sm:w-auto lg:w-1/6 px-2 mb-4">
-                <button
-                  type="button"
-                  className="btn bg-[#49e4fa] text-white flex justify-center px-5 gap-2 align-middle text-center w-full py-3 shadow-lg shadow-lg hover:bg-[#6a9fa6]"
-                >
-                  <FaSearch />
-                  Search
-                </button>
-              </div>
-            </div>
-          </form>
-          <p className="mt-4 text-sm">
-            <span className="font-semibold">Search by tags:</span> Technology,
-            Business, Consulting, IT Company, Design, Development
+          <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
+            Quantum-speed matching with{" "}
+            <span className="text-blue-600 font-semibold">10,000+</span>{" "}
+            future-forward opportunities
           </p>
         </div>
-        <motion.div
-          ref={featureRef}
-          animate={featureControls}
-          initial={{ opacity: 0, y: 50 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="absolute bottom-0 left-0 right-0 pb-16 mb-[100%] px-4 sm:px-11 top-[100vh] sm:top-[90vh]"
-        >
-          <div className="container mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { title: 'Searching', text: 'Find your dream job quickly with our powerful search features.' },
-                { title: 'Applying', text: 'Easily apply to multiple job postings with a single click.' },
-                { title: 'Security', text: 'Your data is safe with us. We prioritize your privacy.' },
-                { title: 'Notifications', text: 'Get real-time updates on your job application status.' }
-              ].map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="single-feature text-center p-6 bg-white shadow-lg shadow-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                >
-                  <h4 className="text-lg font-semibold mb-2">{feature.title}</h4>
-                  <p>{feature.text}</p>
-                </motion.div>
-              ))}
+
+        <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg max-w-6xl mx-auto">
+          <div className="p-4 lg:p-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="relative flex-grow">
+                <input
+                  type="text"
+                  className="w-full h-14 pl-12 pr-4 bg-white/50 rounded-xl outline-none focus:ring-2 focus:ring-violet-500 transition-all text-slate-800 placeholder-slate-400"
+                  placeholder="Search roles, skills, or companies"
+                />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 lg:w-7/12 xl:w-1/2">
+                <div className="relative flex-grow">
+                  <select className="w-full h-14 appearance-none pl-12 pr-4 bg-white/50 rounded-xl outline-none focus:ring-2 focus:ring-violet-500 transition-all text-slate-800">
+                    <option value="">Location</option>
+                    {locations.map((loc) => (
+                      <option key={loc} value={loc.toLowerCase()}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+                </div>
+
+                <div className="relative flex-grow">
+                  <select className="w-full h-14 appearance-none pl-12 pr-4 bg-white/50 rounded-xl outline-none focus:ring-2 focus:ring-violet-500 transition-all text-slate-800">
+                    <option value="">Category</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat.toLowerCase()}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                  <Layers className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+                </div>
+              </div>
+
+              <button className="h-14 px-8 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 whitespace-nowrap">
+                Find Opportunities
+              </button>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-slate-200">
+              <div className="flex flex-wrap gap-2">
+                {jobTypes.map(({ icon: Icon, label }) => (
+                  <button
+                    key={label}
+                    className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+
+        <div className="mt-8 text-center text-slate-600">
+          <p className="mb-2 text-lg">
+            Trending skills: Neurotech, Quantum Programming, Hologram Design
+          </p>
+          <div className="flex items-center justify-center flex-wrap gap-x-2 text-lg">
+            <span>Leading innovators:</span>
+            {["NeuraLink", "SpaceX", "Quantum Labs", "Meta"].map(
+              (company, index) => (
+                <a
+                  key={company}
+                  href="#"
+                  className="text-blue-600 hover:text-violet-600 transition-colors"
+                >
+                  {company}
+                  {index < 3 ? "," : ""}
+                </a>
+              )
+            )}
+          </div>
+        </div>
+      </div>
     </section>
   );
-};
-
-export default Hero;
+}
+  

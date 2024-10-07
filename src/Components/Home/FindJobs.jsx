@@ -1,211 +1,272 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { BiBriefcaseAlt2 } from "react-icons/bi";
-import { BsStars } from "react-icons/bs";
-import {
-  MdOutlineKeyboardArrowDown,
-  MdOutlineKeyboardArrowUp,
-} from "react-icons/md";
-import { experience, jobTypes } from "../Home/utils/data";
-import CustomButton from "./ui/CustomButton";
-import JobCard from "./ui/JobCard";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { useJobContext } from "../../context/JobContext";
-import axios from "axios";
+  import React, { useState, useEffect } from "react";
+  import { useJobContext } from "../../context/JobContext";
+  import axios from "axios";
+  import { motion } from "framer-motion";
+  import { useInView } from "react-intersection-observer";
 
-const FindJobs = () => {
-  const { setJobs, jobs } = useJobContext();
-  const [sort, setSort] = useState("Newest");
-  const [page, setPage] = useState(1);
-  const [numPage, setNumPage] = useState(1);
-  const [filteredJobs, setFilteredJobs] = useState([]);
-  const [filterJobTypes, setFilterJobTypes] = useState([]);
-  const [filterExp, setFilterExp] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const [showJobTypes, setShowJobTypes] = useState(true);
-  const [showExperience, setShowExperience] = useState(true);
+  // Icons (you can replace these with any icon library or custom SVGs)
+  import {
+    FaSearch,
+    FaBriefcase,
+    FaStar,
+    FaChevronDown,
+    FaChevronUp,
+  } from "react-icons/fa";
+  import { Link } from "react-router-dom";
 
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1
-  });
+  const FindJobs = () => {
+    const { setJobs, jobs } = useJobContext();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [location, setLocation] = useState("");
+    const [sort, setSort] = useState("relevance");
+    const [page, setPage] = useState(1);
+    const [numPage, setNumPage] = useState(1);
+    const [filteredJobs, setFilteredJobs] = useState([]);
+    const [filterJobTypes, setFilterJobTypes] = useState([]);
+    const [filterExp, setFilterExp] = useState([]);
+    const [isFetching, setIsFetching] = useState(false);
+    const [showFilters, setShowFilters] = useState(true);
 
-  useEffect(() => {
-    // Fetch jobs when the component mounts or when page changes
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-all-jobs?page=${page}`)
-      .then((response) => {
-        const fetchedJobs = response?.data?.jobs || [];
-        setJobs(fetchedJobs);
-        setNumPage(response?.data?.totalPages || 1); // Assume totalPages is returned
-      })
-      .catch((error) => {
-        console.error("Error fetching jobs:", error);
-      });
-  }, [page, setJobs]);
+    const { ref, inView } = useInView({
+      triggerOnce: true,
+      threshold: 0.1,
+    });
 
-  useEffect(() => {
-    let filtered = jobs;
-  
-    if (filterJobTypes.length > 0) {
-      filtered = filtered.filter((job) => filterJobTypes.includes(job.type));
-    }
+    useEffect(() => {
+      fetchJobs();
+    }, [page, searchTerm, location, sort]);
 
-    if (filterExp.length > 0) {
-      filtered = filtered.filter((job) => filterExp.includes(job.experience));
-    }
+    useEffect(() => {
+      applyFilters();
+    }, [jobs, filterJobTypes, filterExp]);
 
-    setFilteredJobs(filtered);
-  }, [jobs, filterJobTypes, filterExp]);
-
-  const filterJobs = (val) => {
-    setFilterJobTypes((prev) =>
-      prev.includes(val) ? prev.filter((el) => el !== val) : [...prev, val]
-    );
-  };
-
-  const filterExperience = (val) => {
-    setFilterExp((prev) =>
-      prev.includes(val) ? prev.filter((el) => el !== val) : [...prev, val]
-    );
-  };
-
-  const handleLoadMore = () => {
-    if (page < numPage && !isFetching) {
+    const fetchJobs = async () => {
       setIsFetching(true);
-      setPage((prevPage) => prevPage + 1);
-      setIsFetching(false);
-    }
-  };
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/get-all-jobs`,
+          {
+            params: {
+              page,
+              search: searchTerm,
+              location,
+              sort,
+            },
+          }
+        );
+        const fetchedJobs = response?.data?.jobs || [];
+        setJobs((prevJobs) => [...prevJobs, ...fetchedJobs]);
+        setNumPage(response?.data?.totalPages || 1);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
 
-  return (
-    <div className="mx-9 mt-40">
-      <h2 className="align-middle md:ml-72 poppins-bold md:text-3xl text-3xl mx-auto">
-        Recent Job Postings
-      </h2>
-      <div className="container mx-auto flex mt-40 gap-6 2xl:gap-10 md:px-5 py-6 md:py-6">
-        <div className="hidden md:flex flex-col w-1/6 h-fit bg-white shadow-sm p-4">
-          <p className="text-lg font-semibold text-slate-600">Filter Search</p>
+    const applyFilters = () => {
+      let filtered = jobs;
 
-          <div className="py-2">
-            <div
-              className="flex justify-between mb-3 cursor-pointer"
-              onClick={() => setShowJobTypes(!showJobTypes)}
-              aria-expanded={showJobTypes}
-            >
-              <p className="flex items-center gap-2 font-semibold">
-                <BiBriefcaseAlt2 />
-                Job Type
-              </p>
-              <button>
-                {showJobTypes ? (
-                  <MdOutlineKeyboardArrowUp />
-                ) : (
-                  <MdOutlineKeyboardArrowDown />
-                )}
-              </button>
-            </div>
+      if (filterJobTypes.length > 0) {
+        filtered = filtered.filter((job) => filterJobTypes.includes(job.type));
+      }
 
-            {showJobTypes && (
-              <div className="flex flex-col gap-2">
-                {jobTypes.map((jtype, index) => (
-                  <div key={index} className="flex gap-2 text-sm md:text-base">
-                    <input
-                      type="checkbox"
-                      value={jtype}
-                      className="w-4 h-4"
-                      onChange={(e) => filterJobs(e.target.value)}
-                    />
-                    <span>{jtype}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+      if (filterExp.length > 0) {
+        filtered = filtered.filter((job) => filterExp.includes(job.experience));
+      }
 
-          <div className="py-2">
-            <div
-              className="flex justify-between mb-3 cursor-pointer"
-              onClick={() => setShowExperience(!showExperience)}
-              aria-expanded={showExperience}
-            >
-              <p className="flex items-center gap-2 font-semibold">
-                <BsStars />
-                Experience
-              </p>
-              <button>
-                {showExperience ? (
-                  <MdOutlineKeyboardArrowUp />
-                ) : (
-                  <MdOutlineKeyboardArrowDown />
-                )}
-              </button>
-            </div>
+      setFilteredJobs(filtered);
+    };
 
-            {showExperience && (
-              <div className="flex flex-col gap-2">
-                {experience.map((exp) => (
-                  <div key={exp.title} className="flex gap-3">
-                    <input
-                      type="checkbox"
-                      value={exp.value}
-                      className="w-4 h-4"
-                      onChange={(e) => filterExperience(e.target.value)}
-                    />
-                    <span>{exp.title}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+    const handleSearch = (e) => {
+      e.preventDefault();
+      setPage(1);
+      setJobs([]);
+      fetchJobs();
+    };
 
-        <motion.div
-          ref={ref}
-          className="w-full md:w-5/6 px-5 md:px-0 overflow-y-auto h-screen hide-scrollbar"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 50 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm md:text-base">
-              Showing:{" "}
-              <span className="font-semibold">{filteredJobs.length}</span> Jobs
-              Available
-            </p>
-          </div>
+    const handleLoadMore = () => {
+      if (page < numPage && !isFetching) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
 
-          <div className="w-full flex flex-wrap gap-4">
-            {filteredJobs.map((job, index) => (
-              <JobCard job={job} key={index} />
-            ))}
-          </div>
+    const toggleFilter = (type, value) => {
+      const updateFilter = (prev) =>
+        prev.includes(value)
+          ? prev.filter((el) => el !== value)
+          : [...prev, value];
 
-          {numPage > page && !isFetching && (
-            <div className="w-full flex items-center justify-center pt-16">
-              <CustomButton
-                title={isFetching ? "Loading..." : "Load More"}
-                containerStyles={`text-blue-600 py-1.5 px-5 focus:outline-none hover:bg-blue-700 hover:text-white -full text-base border border-blue-600`}
-                onClick={handleLoadMore}
-                disabled={isFetching}
+      type === "jobType"
+        ? setFilterJobTypes(updateFilter)
+        : setFilterExp(updateFilter);
+    };
+
+    return (
+      <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+        <h1 className="text-3xl font-bold mb-8">Find Your Next Opportunity</h1>
+
+        <form onSubmit={handleSearch} className="mb-8">
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-grow relative">
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Job title, keywords, or company"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border rounded-md"
               />
             </div>
-          )}
-        </motion.div>
+            <div className="flex-grow relative">
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="City, state, or zip code"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border rounded-md"
+              />
+            </div>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="w-full sm:w-auto px-3 py-2 border rounded-md"
+            >
+              <option value="relevance">Relevance</option>
+              <option value="date">Date</option>
+              <option value="salary">Salary</option>
+            </select>
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Search Jobs
+            </button>
+          </div>
+        </form>
+
+        <div className="flex flex-col md:flex-row gap-8 flex-grow overflow-hidden">
+          <aside className="w-full md:w-1/4 overflow-y-auto hide-scrollbar">
+            <div className="border rounded-md p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Filters</h2>
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  {showFilters ? <FaChevronUp /> : <FaChevronDown />}
+                </button>
+              </div>
+              {showFilters && (
+                <div>
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-2">Job Type</h3>
+                    {["Full-time", "Part-time", "Contract", "Internship"].map(
+                      (type) => (
+                        <div key={type} className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id={`jobType-${type}`}
+                            checked={filterJobTypes.includes(type)}
+                            onChange={() => toggleFilter("jobType", type)}
+                            className="mr-2"
+                          />
+                          <label htmlFor={`jobType-${type}`}>{type}</label>
+                        </div>
+                      )
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Experience Level</h3>
+                    {[
+                      "Entry Level",
+                      "Mid Level",
+                      "Senior Level",
+                      "Executive",
+                    ].map((exp) => (
+                      <div key={exp} className="flex items-center mb-2">
+                        <input
+                          type="checkbox"
+                          id={`exp-${exp}`}
+                          checked={filterExp.includes(exp)}
+                          onChange={() => toggleFilter("experience", exp)}
+                          className="mr-2"
+                        />
+                        <label htmlFor={`exp-${exp}`}>{exp}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </aside>
+
+          <main className="w-full md:w-3/4 overflow-y-auto hide-scrollbar">
+            <motion.div
+              ref={ref}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 50 }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-sm text-gray-600 mb-4">
+                Showing {filteredJobs.length} jobs
+              </p>
+
+              {filteredJobs.map((job) => (
+                <Link to={`/job-detail/${job?._id}`}>
+                  <div key={job.id} className="border rounded-md p-4 mb-4 flex">
+                    <img
+                      src={job.ProfileUrl || "/api/placeholder/64/64"}
+                      alt={`${job.company} logo`}
+                      className="w-16 h-16 object-cover rounded-md mr-4"
+                    />
+                    <div className="flex-grow">
+                      <h3 className="text-xl font-semibold">{job.title}</h3>
+                      <p className="text-gray-600">{job.company}</p>
+                      <p className="text-sm text-gray-500">{job.location}</p>
+                      <div className="mt-2">
+                        <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-2">
+                          {job.type}
+                        </span>
+                        <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                          {job.experience}
+                        </span>
+                      </div>
+                      <button className="mt-4 px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50">
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+
+              {numPage > page && (
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={isFetching}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+                  >
+                    {isFetching ? "Loading..." : "Load More Jobs"}
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </main>
+        </div>
+
+        <style jsx>{`
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
       </div>
+    );
+  };
 
-      {/* CSS to hide the scrollbar while keeping the scrolling feature */}
-      <style jsx>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none; /* Hide scrollbar for WebKit browsers */
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-          scrollbar-width: none; /* Hide scrollbar for Firefox */
-        }
-      `}</style>
-    </div>
-  );
-};
-
-export default FindJobs;
+  export default FindJobs;

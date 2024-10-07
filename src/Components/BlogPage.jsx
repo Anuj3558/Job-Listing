@@ -19,6 +19,7 @@ import { Pagination } from "antd";
 import "antd/dist/reset.css"; // Import Ant Design styles
 
 const BlogPosts = () => {
+
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +28,7 @@ const BlogPosts = () => {
   const [pageSize, setPageSize] = useState(2); // Set page size
   const navigate = useNavigate();
 
+  
   const touppercase = (text) => {
     return text ? text.toUpperCase() : "";
   };

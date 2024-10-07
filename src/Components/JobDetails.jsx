@@ -1,232 +1,236 @@
-import React, { useState, useEffect } from 'react';
-import { FaHeart, FaMapMarkerAlt, FaDatabase } from 'react-icons/fa';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import Banner from './Home/ui/Banner';
-import { useJobContext } from '../context/JobContext';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-import { TbPointFilled } from "react-icons/tb";
-import { useProfile } from '../context/ProfileContext';
-import axios from 'axios';
-import { message } from 'antd';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  Heart,
+  MapPin,
+  Database,
+  Briefcase,
+  GraduationCap,
+  ChevronRight,
+} from "lucide-react";
+import Banner from "./Home/ui/Banner";
+import { useJobContext } from "../context/JobContext";
+import { useProfile } from "../context/ProfileContext";
+import axios from "axios";
+import { message } from "antd";
+import Cookies from "js-cookie";
 
 const JobDetails = () => {
+  const [liked, setLiked] = useState(false);
+  const [jobDetail, setJobDetails] = useState(null);
   const location = useLocation();
   const { jobs } = useJobContext();
-  const Navigate = useNavigate()
-  const { userType } = useProfile(); // Get userType from ProfileContext
-  const [jobDetail, setJobDetails] = useState(null);
+  const navigate = useNavigate();
+  const { userType } = useProfile();
+  const userId = Cookies.get("_id");
+  const jobId = location.pathname.slice(12);
 
-  // Extracting job ID or any other parameter from the URL
-  const jobId = location.pathname.slice(12); // Assuming job ID is the last segment in the URL
-  const HandleApplyjob=async (e)=>{
-    if(userType===""){
-     message.warning("Please login to Apply")
-      Navigate("/login")
+  const handleWishlist = async () => {
+    try {
+      const url = `${process.env.REACT_APP_BACKEND_URL}/wishlist/${jobId}`;
+      const response = await axios.post(url, { userId, jobId });
+      setLiked(response.data.jobIds.includes(jobId));
+      if (response.status === 201) {
+        message.success("Job added to wishlist");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        try {
+          const removeUrl = `${process.env.REACT_APP_BACKEND_URL}/wishlist/remove`;
+          await axios.delete(removeUrl, { data: { userId, jobId } });
+          setLiked(false);
+          message.success("Job removed from wishlist");
+        } catch (removeError) {
+          message.error("Error removing from wishlist");
+        }
+      } else {
+        message.error("Error occurred while updating wishlist");
+      }
     }
-    else{
-      Navigate(`/resume-check/${jobId}`)
+  };
+
+  const handleApplyJob = async () => {
+    if (userType === "") {
+      message.warning("Please login to Apply");
+      navigate("/login");
+    } else {
+      navigate(`/resume-check/${jobId}`);
     }
- }
+  };
+
   useEffect(() => {
-    console.log(userType)
-    // Update job details when the component mounts or when jobs or jobId changes
     const foundJob = jobs.find((job) => job._id === jobId);
     setJobDetails(foundJob || {});
-  }, [jobId, jobs,userType]);
+    handleWishlist();
+  }, [jobId, jobs]);
 
   if (!jobDetail) {
     return (
-      <div>
-        {/* Banner Area */}
-        <Banner page={"JobDetails"} />
-        {/* Post Area */}
-        <section className="py-12 px-14">
-          <div className="container mx-auto flex flex-wrap justify-center">
-            <div className="w-full lg:w-2/3">
-              {/* Job Post */}
-              <div className="bg-white p-6 shadow-md lg:flex lg:flex-row mb-6">
-                <div className="lg:w-1/4">
-                  <Skeleton height={200} />
-                  <ul className="mt-4 flex space-x-2">
-                    <li><Skeleton width={60} height={20} /></li>
-                    <li><Skeleton width={60} height={20} /></li>
-                    <li><Skeleton width={60} height={20} /></li>
-                  </ul>
-                </div>
-                <div className="lg:w-3/4 lg:pl-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <Skeleton width={150} height={30} />
-                      <Skeleton width={100} height={20} />
-                    </div>
-                    <div className="flex space-x-4">
-                      <Skeleton circle={true} height={30} width={30} />
-                      <Skeleton width={80} height={30} />
-                    </div>
-                  </div>
-                  <Skeleton count={3} />
-                </div>
-              </div>
-              {/* Job Details */}
-              <div className="bg-white p-6 shadow-md lg:mb-6">
-                <Skeleton width={200} height={30} />
-                <Skeleton count={2} />
-              </div>
-              {/* Experience Requirements */}
-              <div className="bg-white p-6 shadow-md lg:mb-6">
-                <Skeleton width={200} height={30} />
-                <Skeleton count={2} />
-              </div>
-              {/* Job Features */}
-              <div className="bg-white p-6 shadow-md lg:mb-6">
-                <Skeleton width={200} height={30} />
-                <Skeleton count={2} />
-              </div>
-              {/* Education Requirements */}
-              <div className="bg-white p-6 shadow-md lg:mb-6">
-                <Skeleton width={200} height={30} />
-                <Skeleton count={2} />
-              </div>
-            </div>
-            {/* Sidebar */}
-            <div className="w-full lg:w-1/3 lg:pl-8">
-              {/* Jobs by Location */}
-              <div className="bg-white p-6 shadow-md lg:mb-6">
-                <Skeleton width={200} height={30} />
-                <Skeleton count={2} />
-              </div>
-              {/* Top Rated Jobs */}
-              <div className="bg-white p-6 shadow-md lg:mb-6">
-                <Skeleton width={200} height={30} />
-                <Skeleton count={2} />
-              </div>
-              {/* Jobs by Category */}
-              <div className="bg-white p-6 shadow-md lg:mb-6">
-                <Skeleton width={200} height={30} />
-                <Skeleton count={2} />
-              </div>
-            </div>
-          </div>
-        </section>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="animate-pulse text-3xl font-semibold text-indigo-600">
+          Loading...
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Banner Area */}
-      <Banner page={"JobDetails"} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <Banner page="JobDetails" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="container mx-auto py-12 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="p-8">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                  {jobDetail.title}
+                </h1>
+                <h2 className="text-2xl text-indigo-600">
+                  {jobDetail.company}
+                </h2>
+              </div>
+              <div className="flex space-x-4">
+                {(userType === "employee" || userType === "") && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      handleWishlist();
+                      setLiked((prev) => !prev);
+                    }}
+                    className={`p-3 rounded-full transition-all duration-300 ${
+                      liked
+                        ? "bg-red-500 text-white"
+                        : "bg-gray-200 text-gray-600"
+                    }`}
+                  >
+                    <Heart
+                      className={`w-6 h-6 ${liked ? "fill-current" : ""}`}
+                    />
+                  </motion.button>
+                )}
+                {(userType === "employee" || userType === "") && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleApplyJob}
+                    className="bg-indigo-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-colors duration-300"
+                  >
+                    Apply Now
+                  </motion.button>
+                )}
+              </div>
+            </div>
 
-      {/* Post Area */}
-      <section className="py-12 px-14">
-        <div className="container mx-auto flex flex-wrap justify-center">
-          <div className="w-full lg:w-2/3">
-            {/* Job Post */}
-            <div className="bg-white p-6 shadow-md lg:flex lg:flex-row mb-6">
-              <div className="lg:w-1/4">
-                <img src={jobDetail.ProfileUrl || "img/post.png"} alt="Job Image" className="w-full h-auto" />
-                <ul className="mt-4 flex space-x-2">
-                  {jobDetail.categories && jobDetail.categories.map((category, index) => (
-                    <li key={index}>
-                      <a href="#" className="bg-blue-500 text-white px-2 py-1">{category}</a>
-                    </li>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="flex items-center text-indigo-700">
+                <Briefcase className="w-5 h-5 mr-2" />
+                <span>{jobDetail.nature || "Full time"}</span>
+              </div>
+              <div className="flex items-center text-indigo-700">
+                <MapPin className="w-5 h-5 mr-2" />
+                <span>{jobDetail.location}</span>
+              </div>
+              <div className="flex items-center text-indigo-700">
+                <Database className="w-5 h-5 mr-2" />
+                <span>{jobDetail.salary}</span>
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              <section>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Job Description
+                </h3>
+                <p className="text-gray-700">{jobDetail.description}</p>
+              </section>
+
+              <section>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Whom We Are Looking For
+                </h3>
+                <p className="text-gray-700">{jobDetail.whoWeAreLookingFor}</p>
+              </section>
+
+              <section>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Experience Requirements
+                </h3>
+                <ul className="list-disc list-inside text-gray-700 space-y-2">
+                  {jobDetail.experienceRequirements?.map(
+                    (requirement, index) => (
+                      <li key={index}>{requirement}</li>
+                    )
+                  )}
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Job Features
+                </h3>
+                <ul className="list-disc list-inside text-gray-700 space-y-2">
+                  {jobDetail.jobFeatures?.map((feature, index) => (
+                    <li key={index}>{feature}</li>
                   ))}
                 </ul>
-              </div>
-              <div className="lg:w-3/4 lg:pl-6">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-2xl font-bold"><a href="#">{jobDetail.title || "Job Title"}</a></h4>
-                    <h6 className="text-lg text-gray-500">{jobDetail.company || "Company Name"}</h6>
-                  </div>
-                  <div className="flex space-x-4">
-                  {(userType === "employee" || userType === "") && <button className="text-red-500"><FaHeart /></button>}
-                    {/* Conditionally show the 'Apply' button for employees only */}
-                    {(userType === 'employee' || userType === "") && (
-                      <button onClick={HandleApplyjob} className="bg-purple-500 text-white px-4 py-2 hover:bg-purple-600">
-                        Apply
-                      </button>
-                      
-                    )}
-                  </div>
-                </div>
-                <p className="mt-4 text-gray-700">
-                  {jobDetail.description || "Job description goes here..."}
+              </section>
+
+              <section>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Education Requirements
+                </h3>
+                <p className="text-gray-700">
+                  {jobDetail.educationRequirements}
                 </p>
-                <h5 className="mt-4 font-bold">Job Nature: {jobDetail.nature || "Full time"}</h5>
-                <p className="mt-2 flex items-center text-gray-600"><FaMapMarkerAlt className="mr-2" /> {jobDetail.location || "Location"}</p>
-                <p className="mt-2 flex items-center text-gray-600"><FaDatabase className="mr-2" /> {jobDetail.salary || "Salary"}</p>
-              </div>
-            </div>
-
-            {/* Job Details */}
-            <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Whom we are looking for</h4>
-              <p className="text-gray-700 mb-4">
-                {jobDetail.whoWeAreLookingFor || "Details about whom we are looking for..."}
-              </p>
-            </div>
-
-            {/* Experience Requirements */}
-            <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Experience Requirements</h4>
-              <ul className="space-y-4">
-                {jobDetail.experienceRequirements && jobDetail.experienceRequirements.map((requirement, index) => (
-                  <li key={index} className="flex items-start">
-                    <TbPointFilled className='mr-5' />
-                    <span>{requirement}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Job Features */}
-            <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Job Features</h4>
-              <ul className="space-y-4">
-                {jobDetail.jobFeatures && jobDetail.jobFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <TbPointFilled className='mr-5' />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Education Requirements */}
-            <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Education Requirements</h4>
-              <p className="text-gray-700">
-                {jobDetail.educationRequirements || "Education requirements go here..."}
-              </p>
+              </section>
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="w-full lg:w-1/3 lg:pl-8">
-            {/* Jobs by Location */}
-            <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Jobs by Location</h4>
-              <p className="text-gray-700">
-                {jobDetail.location || "Location"}
-              </p>
-            </div>
-
-            {/* Top Rated Jobs */}
-            <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Top Rated Jobs</h4>
-              <p className="text-gray-700">List of top-rated jobs goes here...</p>
-            </div>
-
-            {/* Jobs by Category */}
-            <div className="bg-white p-6 shadow-md lg:mb-6">
-              <h4 className="text-2xl font-bold mb-4">Jobs by Category</h4>
-              <p className="text-gray-700">List of jobs by category goes here...</p>
+          <div className="bg-indigo-50 p-8">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6">
+              Related Jobs
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((job) => (
+                <div
+                  key={job}
+                  className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h4 className="text-xl font-semibold text-gray-900">
+                        Similar Job Title
+                      </h4>
+                      <p className="text-indigo-600">Company Name</p>
+                    </div>
+                    <GraduationCap className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div className="flex items-center text-gray-600 text-sm mb-4">
+                    <MapPin className="w-4 h-4 mr-1" />
+                    <span>Job Location</span>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="w-full bg-indigo-100 text-indigo-700 py-2 rounded-lg font-medium flex items-center justify-center"
+                  >
+                    View Details <ChevronRight className="w-4 h-4 ml-1" />
+                  </motion.button>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      </section>
+      </motion.div>
     </div>
   );
 };
